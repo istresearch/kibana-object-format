@@ -1,12 +1,16 @@
 
 export default function (kibana) {
-  return new kibana.Plugin({
-    require: ['elasticsearch', 'kibana'],
+    return new kibana.Plugin({
 
-    uiExports: {
-      hacks: [
-        'plugins/test_plugin/hacks/field_mapping_hack'
-      ]
-    }
-  });
+        require: ['elasticsearch', 'kibana'],
+
+        uiExports: {
+            visTypes: [
+                'plugins/field_mapper_hack/stringify/object'
+            ],
+            hacks: [
+                'plugins/field_mapper_hack/hacks/field_mapper_hack'
+            ]
+        }
+    });
 };

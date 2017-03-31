@@ -109,7 +109,7 @@ app.run(function(courier, config) {
                         analyzed: false,
                         doc_values: false,
                         indexed: false,
-                        type: "unknown"
+                        type: "string"
                     });
                 });
 

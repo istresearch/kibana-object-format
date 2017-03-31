@@ -1,0 +1,65 @@
+<table class="object-table">
+    <tbody>
+<%
+_.forEach(fields, function(field, index) {
+%>
+    <tr class="object-tr">
+<% if (field.label) { %>
+        <td class="object-td"><span class="object-label"><%- field.label %></span></td>
+<% } %>
+        <td class="object-td">
+<%
+if(field.formatType == 'image') {
+var image_attributes = '';
+
+if(field.height) {
+image_attributes += 'height: ' + field.height + 'px;'
+}
+
+if(field.width) {
+image_attributes += 'width: ' + field.width + 'px;'
+}
+_.forEach(field.values, function(src, index) {
+%>
+            <a href="<%- src %>" target="_blank">
+                <div class=image-container
+                     style="background-image: url('<%- src %>');
+                            background-size: cover;
+                            background-position: center;
+                            <%- image_attributes %>">
+                </div>
+            </a>
+<%
+});
+}
+else if (field.formatType == 'link') {
+_.forEach(field.values, function(href, index) {
+%>
+            <div><a href="<%- href %>" target="_blank"><%- href %></a></div>
+<%
+});
+}
+else {
+_.forEach(field.values, function(value, index) {
+%>
+            <div><%- value %></div>
+<%
+});
+}
+%>
+        </td>
+    </tr>
+<%
+});
+%>
+    </tbody>
+</table>
+<!-- [object field formatter] Change the 'white-space' css attribute of our containing div, and remove the warning icon -->
+<script>
+var parent = $("table.object-table").parent()
+parent.css("white-space", "nowrap");
+
+if (parent.hasClass("doc-viewer-value")) {
+    parent.siblings("i.fa-warning").remove();
+}
+</script>
