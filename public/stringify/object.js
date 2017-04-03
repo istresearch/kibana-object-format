@@ -7,10 +7,11 @@ import objectTemplate from './editors/object.html';
 function ObjectFormatProvider(Private) {
 
     require('ui/utils/lodash-mixins/oop')(_);
+    require('ui/utils/lodash-mixins/string')(_);
     require('./lib/lodash-mixins/get_pluck')(_);
 
     const FieldFormat = Private(IndexPatternsFieldFormatProvider);
-    const convertTemplate = _.template(require('./templates/object_image.html'))
+    const convertTemplate = _.template(require('./templates/object_format.html'))
     const DEFAULT_VALUES = {
         label: null,
         path: null,
@@ -67,45 +68,61 @@ function ObjectFormatProvider(Private) {
         html(val) {
             let basePath = this.param('basePath');
             let objectFields = this.param('fields');
-            let fields = [];
 
-            _.forEach(objectFields, function(field) {
-                let label = '';
-                let fieldPath = '';
+            if (basePath) {
+                val = _.get(val, basePath);
+            }
 
-                if (field.label) label = field.label + ": ";
-                if (field.path) fieldPath = field.path;
+            if (!_.isArray(val)) {
+                val = [val];
+            }
 
-                let fieldValues = _.getPluck(val, fieldPath);
+            let results = [];
 
-                switch (field.type) {
-                    case 'text':
-                        if (_.isArray(fieldValues)) {
-                            fieldValues = _(fieldValues)
-                                .map( item => ( _.isObject(item) ? JSON.stringify(item) : item) )
-                                .join(', ');
-                        }
-                        else if (_.isObject(fieldValues)) {
-                            fieldValues = JSON.stringify(fieldValues)
-                        }
-                        break;
+            _.forEach(val, function(subval){
 
-                    default:
-                        break;
-                }
+                let fields = [];
 
-                if (!_.isArray(fieldValues)) {
-                    fieldValues = [fieldValues]
-                }
+                _.forEach(objectFields, function(field) {
+                    let label = '';
+                    let fieldPath = '';
 
-                fields.push({
-                    label: label,
-                    formatType: field.type,
-                    values: fieldValues
+                    if (field.label) label = field.label + ": ";
+                    if (field.path) fieldPath = field.path;
+
+                    let fieldValues = _.getPluck(subval, fieldPath);
+
+                    switch (field.type) {
+                        case 'text':
+                            if (_.isArray(fieldValues)) {
+                                fieldValues = _(fieldValues)
+                                    .map( item => ( _.isObject(item) ? JSON.stringify(item) : item) )
+                                    .join(', ');
+                            }
+                            else if (_.isObject(fieldValues)) {
+                                fieldValues = JSON.stringify(fieldValues)
+                            }
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    if (!_.isArray(fieldValues)) {
+                        fieldValues = [fieldValues]
+                    }
+
+                    fields.push({
+                        label: label,
+                        formatType: field.type,
+                        values: fieldValues
+                    });
                 });
+
+                results.push(convertTemplate({fields}));
             });
 
-            return convertTemplate({fields})
+            return results.join('\n');
         }
     };
 

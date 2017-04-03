@@ -60,6 +60,9 @@ var parent = $("table.object-table").parent()
 parent.css("white-space", "nowrap");
 
 if (parent.hasClass("doc-viewer-value")) {
-    parent.siblings("i.fa-warning").remove();
+    var siblings = parent.siblings("i.fa-warning")
+    if (siblings) {
+        siblings.remove();
+    }
 }
 </script>
