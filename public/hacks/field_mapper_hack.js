@@ -4,10 +4,15 @@ import 'ui/courier';
 import 'ui/index_patterns';
 import uiModules from 'ui/modules';
 import defaultSettings from './settings/defaults';
+import FilterManagerProvider from 'ui/filter_manager';
+import RegistryFieldFormatsProvider from 'ui/registry/field_formats';
 
 let app = uiModules.get('kibana/courier',
                         'kibana/index_patterns');
 
+/**
+ * Add an entry to the Advanced Settings table.
+ */
 app.run(function(config) {
 
     const settings = defaultSettings();
@@ -27,7 +32,9 @@ app.run(function(config) {
     })
 });
 
-
+/**
+ * Patch 'mapper.getFieldsForIndexPattern' to allow us to insert additional fields.
+ */
 app.run(function(courier, config) {
 
     let indexPatterns = courier.indexPatterns;
@@ -108,7 +115,7 @@ app.run(function(courier, config) {
                         searchable: false,
                         analyzed: false,
                         doc_values: false,
-                        indexed: false,
+                        indexed: true,
                         type: "string"
                     });
                 });
@@ -122,3 +129,79 @@ app.run(function(courier, config) {
     })(fieldsFunc);
 });
 
+/**
+ * Patch 'FilterManager' to allow us to hand-craft filters for fields
+ * that use the Object formatter.
+ */
+app.run(function(config, Private) {
+
+    const filterManager = Private(FilterManagerProvider);
+    const _ObjectFormat = Private(RegistryFieldFormatsProvider).getType('ist-object');
+
+    let addFunc = filterManager.add;
+
+    (function(addFunc) { // Cache the original method
+        filterManager.add = function() { // Wrap the method
+
+            let field = arguments[0];
+            let values = arguments[1];
+            let operation = arguments[2];
+            let index = arguments[3];
+
+            // If the field is one of our special Object fields
+            if (field && field.format && field.format.type === _ObjectFormat) {
+                let params = field.format._params;
+                let basePath = params.basePath;
+                let filters = null;
+
+                if (!_.isArray(values)) {
+                    values = [values];
+                }
+
+                _.forEach(values, function(value) {
+                    if (basePath) {
+                        value = _.get(value, basePath);
+                    }
+
+                    if (!_.isArray(value)) {
+                        value = [value];
+                    }
+
+                    _.forEach(params.fields, function(fieldEntry) {
+                        if (fieldEntry.filtered) {
+                            let path = fieldEntry.path;
+                            let entry_values = [];
+
+                            _.forEach(value, function(value_entry) {
+
+                                let plucked = _.getPluck(value_entry, path);
+
+                                if (_.isArray(plucked)) {
+                                    _.forEach(plucked, function(v) {
+                                        entry_values.push(v);
+                                    });
+                                }
+                                else {
+                                    entry_values.push(plucked);
+                                }
+                            });
+
+                            path = basePath ? [field.name, basePath, path].join('.') : [field.name, path].join('.');
+
+                            if (fieldEntry.filter_field) {
+                                path = [path, fieldEntry.filter_field].join('.');
+                            }
+
+                            filters = addFunc.apply(this, [path, entry_values, operation, index]);
+                        }
+                    });
+                });
+
+                return filters;
+            }
+            else {
+                return addFunc.apply(this, arguments);
+            }
+        };
+    })(addFunc);
+});

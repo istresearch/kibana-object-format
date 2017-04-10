@@ -36,6 +36,73 @@
                 </select>
             </div>
         </div>
+        <div ng-if="field.type == 'text'"
+             class="editor-object editor-advanced">
+
+            <div class="form-group">
+                <label>Enable Filtering</label>
+                <input type="checkbox"
+                       ng-model="field.filtered"
+                       class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Filter Field</label>
+                <input ng-model="field.filter_field"
+                       class="form-control">
+            </div>
+        </div>
+        <div ng-if="field.type == 'image'"
+             class="editor-object editor-advanced">
+            <div class="form-group">
+                <label>Enable Filtering</label>
+                <input type="checkbox"
+                       ng-model="field.filtered"
+                       class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Filter Field</label>
+                <input ng-model="field.filter_field"
+                       class="form-control">
+            </div>
+        </div>
+        <div ng-if="field.type == 'image'"
+             class="editor-object editor-advanced">
+            <div class="form-group">
+                <label>Image Height
+                    <small>(pixels)</small>
+                </label>
+                <input ng-model="field.height"
+                       type="number"
+                       class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Image Width
+                    <small>(pixels)</small>
+                </label>
+                <input ng-model="field.width"
+                       type="number"
+                       class="form-control">
+            </div>
+        </div>
+        <div ng-if="field.type == 'link'"
+             class="editor-object editor-advanced">
+
+            <div class="form-group">
+                <label>Enable Filtering</label>
+                <input type="checkbox"
+                       ng-model="field.filtered"
+                       class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Filter Field</label>
+                <input ng-model="field.filter_field"
+                       class="form-control">
+            </div>
+        </div>
     </div>
 
     <button aria-label="Add Field" ng-click="addField()"

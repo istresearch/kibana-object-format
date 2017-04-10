@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import IndexPatternsFieldFormatProvider from 'ui/index_patterns/_field_format/field_format';
-
+import { getHighlightHtml } from 'ui/highlight';
 import './editors/object.less';
 import objectTemplate from './editors/object.html';
 
@@ -15,7 +15,11 @@ function ObjectFormatProvider(Private) {
     const DEFAULT_VALUES = {
         label: null,
         path: null,
-        type: 'text'
+        type: 'text',
+        filtered: true,
+        filter_field: 'keyword',
+        height: null,
+        width: null
     };
 
     _.class(_ObjectFormat).inherits(FieldFormat);
@@ -65,9 +69,29 @@ function ObjectFormatProvider(Private) {
         text(val) {
             return _.asPrettyString(val);
         },
-        html(val) {
+        html(val, field, hit) { // TODO hit highlighting
             let basePath = this.param('basePath');
             let objectFields = this.param('fields');
+            let flattened_fields = [];
+
+            // Get the flattened fields from the configuration, for highlighting
+            _.forEach(objectFields, function(config_field) {
+                if (config_field.path) {
+                    let parts = [field.name]
+
+                    if (basePath) {
+                        parts.push(basePath)
+                    }
+
+                    parts.push(config_field.path);
+
+                    if (config_field.filter_field) {
+                        parts.push(config_field.filter_field);
+                    }
+
+                    flattened_fields.push(parts.join('.'))
+                }
+            });
 
             if (basePath) {
                 val = _.get(val, basePath);
@@ -115,11 +139,23 @@ function ObjectFormatProvider(Private) {
                     fields.push({
                         label: label,
                         formatType: field.type,
-                        values: fieldValues
+                        values: fieldValues,
+                        width: field.width,
+                        height: field.height,
+                        filter_field: field.filter_field
                     });
                 });
 
-                results.push(convertTemplate({fields}));
+                let html = convertTemplate({fields});
+
+                _.forEach(flattened_fields, function(field_path) {
+                    if (hit && hit.highlight && hit.highlight[field_path]) {
+                        html = getHighlightHtml(html, hit.highlight[field_path]);
+                    }
+                });
+
+                results.push(html);
+
             });
 
             return results.join('\n');
