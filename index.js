@@ -6,10 +6,11 @@ export default function (kibana) {
 
         uiExports: {
             visTypes: [
-                'plugins/field_mapper_hack/stringify/object'
+                'plugins/kibana_object_viz/stringify/object'
             ],
             hacks: [
-                'plugins/field_mapper_hack/hacks/field_mapper_hack'
+                'plugins/kibana_object_viz/hacks/field_mapper_hack',
+                'plugins/kibana_object_viz/hacks/object_filtering_hack'
             ]
         }
     });

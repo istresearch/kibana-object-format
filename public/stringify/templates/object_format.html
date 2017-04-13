@@ -8,45 +8,7 @@ _.forEach(fields, function(field, index) {
         <td class="object-td"><span class="object-label"><%- field.label %></span></td>
 <% } %>
         <td class="object-td">
-<%
-if(field.formatType == 'image') {
-var image_attributes = '';
-
-if(field.height) {
-image_attributes += 'height: ' + field.height + 'px;'
-}
-
-if(field.width) {
-image_attributes += 'width: ' + field.width + 'px;'
-}
-_.forEach(field.values, function(src, index) {
-%>
-            <a href="<%- src %>" target="_blank">
-                <div class=image-container
-                     style="background-image: url('<%- src %>');
-                            background-size: cover;
-                            background-position: center;
-                            <%- image_attributes %>">
-                </div>
-            </a>
-<%
-});
-}
-else if (field.formatType == 'link') {
-_.forEach(field.values, function(href, index) {
-%>
-            <div><a href="<%- href %>" target="_blank"><%- href %></a></div>
-<%
-});
-}
-else {
-_.forEach(field.values, function(value, index) {
-%>
-            <div><%- value %></div>
-<%
-});
-}
-%>
+            <%= field.html %>
         </td>
     </tr>
 <%

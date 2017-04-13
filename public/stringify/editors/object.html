@@ -1,10 +1,20 @@
 <div class="form-group">
-    <div class="form-group editor-form-field">
-        <label>Base Path
-            <small>(optional, dot notation)</small>
-        </label>
-        <input ng-model="editor.formatParams.basePath"
-               class="form-control">
+    <div class="editor-object editor-form-field">
+        <div class="form-group">
+            <label>Base Path
+                <small>(optional, dot notation)</small>
+            </label>
+            <input ng-model="editor.formatParams.basePath"
+                   class="form-control">
+        </div>
+        <div class="form-group">
+            <label>Array Limit
+                <small>(optional)</small>
+            </label>
+            <input ng-model="editor.formatParams.limit"
+                   type="number"
+                   class="form-control">
+        </div>
     </div>
     <div ng-repeat="field in editor.formatParams.fields">
         <div class="editor-object">
@@ -48,7 +58,16 @@
 
             <div class="form-group">
                 <label>Filter Field</label>
-                <input ng-model="field.filter_field"
+                <input ng-model="field.filterField"
+                       class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Array Limit
+                    <small>(optional)</small>
+                </label>
+                <input ng-model="field.limit"
+                       type="number"
                        class="form-control">
             </div>
         </div>
@@ -63,7 +82,16 @@
 
             <div class="form-group">
                 <label>Filter Field</label>
-                <input ng-model="field.filter_field"
+                <input ng-model="field.filterField"
+                       class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Array Limit
+                    <small>(optional)</small>
+                </label>
+                <input ng-model="field.limit"
+                       type="number"
                        class="form-control">
             </div>
         </div>
@@ -71,7 +99,7 @@
              class="editor-object editor-advanced">
             <div class="form-group">
                 <label>Image Height
-                    <small>(pixels)</small>
+                    <small>(pixels, optional)</small>
                 </label>
                 <input ng-model="field.height"
                        type="number"
@@ -80,7 +108,7 @@
 
             <div class="form-group">
                 <label>Image Width
-                    <small>(pixels)</small>
+                    <small>(pixels, optional)</small>
                 </label>
                 <input ng-model="field.width"
                        type="number"
@@ -99,7 +127,16 @@
 
             <div class="form-group">
                 <label>Filter Field</label>
-                <input ng-model="field.filter_field"
+                <input ng-model="field.filterField"
+                       class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Array Limit
+                    <small>(optional)</small>
+                </label>
+                <input ng-model="field.limit"
+                       type="number"
                        class="form-control">
             </div>
         </div>

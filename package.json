@@ -1,7 +1,7 @@
 {
-  "name": "field_mapper_hack",
+  "name": "kibana_object_viz",
   "version": "0.1.0",
-  "description": "Enables parent fields to be configured with a field formatter.",
+  "description": "Enables objects in arrays to be configured with a field formatter.",
   "license": "Apache-2.0",
   "main": "index.js",
   "kibana": {
