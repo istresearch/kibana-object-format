@@ -1,10 +1,9 @@
 import _ from 'lodash';
 import IndexPatternsFieldFormatProvider from 'ui/index_patterns/_field_format/field_format';
-import { getHighlightHtml } from 'ui/highlight';
 import './editors/object.less';
 import objectTemplate from './editors/object.html';
 
-function ObjectFormatProvider(Private) {
+function ObjectFormatProvider(Private, highlightFilter) {
 
     require('ui/utils/lodash-mixins/oop')(_);
     require('ui/utils/lodash-mixins/string')(_);
@@ -156,10 +155,10 @@ function ObjectFormatProvider(Private) {
                 };
 
                 if (hit && hit.highlight && hit.highlight[fullPath]) {
-                    valueModel.display = getHighlightHtml(valueModel.display, hit.highlight[fullPath]);
+                    valueModel.display = highlightFilter(valueModel.display, hit.highlight[fullPath]);
                 }
                 else if (hit && hit.highlight && hit.highlight[filterPath]) {
-                    valueModel.display = getHighlightHtml(valueModel.display, hit.highlight[filterPath]);
+                    valueModel.display = highlightFilter(valueModel.display, hit.highlight[filterPath]);
                 }
 
                 valueModels.push(valueModel);
