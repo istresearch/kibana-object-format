@@ -2,7 +2,7 @@
   "name": "kibana_object_viz",
   "version": "0.1.0",
   "description": "Enables objects in arrays to be configured with a field formatter.",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "main": "index.js",
   "kibana": {
     "version": "5.3.0"
