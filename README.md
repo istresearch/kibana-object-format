@@ -25,13 +25,39 @@ Looking at fields list in the Index Patterns tab reveals this as well. You will 
 
 ## Instructions
 
-Install the plugin.
+ 1. Install the plugin following the [official documentation](https://www.elastic.co/guide/en/kibana/current/_installing_plugins.html).
 
-Configure the index pattern to include the fields.
+ 2. Configure the index pattern to include the fields.
+ 
+    The plugin adds a new property to the *Advanced Settings* table named **fieldMapperHack:fields**. The value is a JSON object which defines include and exclude lists per index pattern. The include and exclude lists values can be regular expressions, and are applied include first then excludes second.
+    
+    The index pattern can be named '__\*__', and this entry will be used as the default for all indexe patterns if a specific entry is not defined.
 
-Refresh the fields list.
+    ```json
+    {
+        "index_pattern":{
+            "*":{
+                "include":[
+    
+                ],
+                "exclude":[
+                    ".*"
+                ]
+            },
+            "my_index_pattern":{
+                "include":[
+                    "^my.field$"
+                ]
+            }
+        }
+    }
+    ```
 
-Choose a field formatter for the new field entry.
+ 3. Refresh the fields list for your index pattern.
+    
+    ![Screenshot](images/refresh.jpg)
+
+ 4. Select a field formatter for the new field entry!
 
 ---
 
