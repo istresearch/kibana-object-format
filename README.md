@@ -31,7 +31,7 @@ Looking at fields list in the Index Patterns tab reveals this as well. You will 
  
     The plugin adds a new property to the *Advanced Settings* table named **fieldMapperHack:fields**. The value is a JSON object which defines include and exclude lists per index pattern. The include and exclude lists values can be regular expressions, and are applied include first then excludes second.
     
-    The index pattern can be named '__\*__', and this entry will be used as the default for all indexe patterns if a specific entry is not defined.
+    The index pattern can be named '__\*__', and this entry will be used as the default for all index patterns if a specific entry is not defined.
 
     ```json
     {
