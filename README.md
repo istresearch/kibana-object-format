@@ -17,7 +17,7 @@ This Kibana plugin enables you to configure field formatters for arrays of objec
 
 ## How it works
 
-Kibana has long needed a good way to display arrays of objects in the discover tab. What you get from Kibana is a json string representation of the data nad a warning icon stating that, "Objects in arrays are not well supported". The reason for this is that Elasticsearch doesn't care or store in the index mapping whether your field is an array of objects. The index mapping is a flattened view of the data. 
+Kibana has long needed a good way to display arrays of objects in the discover tab. What you get from Kibana is a json string representation of the data and a warning icon stating that, "Objects in arrays are not well supported". The reason for this is that Elasticsearch doesn't care or store in the index mapping that your field is an array of objects. The index mapping is a flattened view of the data. 
 
 ![Screenshot](images/not_supported.jpg)
 
