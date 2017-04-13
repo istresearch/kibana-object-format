@@ -21,13 +21,13 @@ Kibana has long needed a good way to display arrays of objects in the discover t
 
 ![Screenshot](images/not_supported.jpg)
 
-Looking at fields list in the Index Patterns tab reveals this as well. You will find entries for all of the concrete values of your object, but nothing for the object or the possible array containing the object. This plugin allows you to create synthetic entries in the fields list. Once an entry for the path you want to display is available in the list, you can apply any field formatter to it, and the Discover table will use that to display the value. 
+Looking at the fields list on the Index Patterns tab reveals this as well. You will find entries for all of the concrete values of your object, but nothing for the containing object. This plugin allows you to create synthetic entries in the fields list. Once an entry for the path you want to display is available in the list, you can apply any field formatter to it, and the Discover table will use that to display the value. 
 
 ## Instructions
 
- 1. Install the plugin following the [official documentation](https://www.elastic.co/guide/en/kibana/current/_installing_plugins.html).
+ 1. Install the plugin following Kibana's [official documentation](https://www.elastic.co/guide/en/kibana/current/_installing_plugins.html).
 
- 2. Configure the index pattern to include the fields.
+ 2. Configure the index pattern to include the additional field(s).
  
     The plugin adds a new property to the *Advanced Settings* table named **fieldMapperHack:fields**. The value is a JSON object which defines include and exclude lists per index pattern. The include and exclude lists values can be regular expressions, and are applied include first then excludes second.
     
