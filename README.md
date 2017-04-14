@@ -1,4 +1,4 @@
-# kibana_object_viz
+# kibana_object_format
 
 This Kibana plugin enables you to configure field formatters for arrays of objects in the Discover tab and Search tables in dashboards.
 

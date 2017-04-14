@@ -1,5 +1,5 @@
 {
-  "name": "kibana_object_viz",
+  "name": "kibana_object_format",
   "version": "0.1.0",
   "description": "Enables objects in arrays to be configured with a field formatter.",
   "license": "MIT",
