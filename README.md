@@ -246,7 +246,7 @@ Now edit the **fieldMapperHack:fields** advanced configuration:
 }
 ```
 
-Next we must *Refresh* the field list for the index pattern, and apply the *Object* field formatter to new *books.new_releases* field.
+Next we must *Refresh* the field list for the index pattern, and apply the *Object* field formatter to new *new_releases* field.
 
 <img src="images/array_format.jpg">
 
