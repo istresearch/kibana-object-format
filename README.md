@@ -19,7 +19,7 @@ This Kibana plugin enables you to configure field formatters for arrays of objec
 
 Kibana has long needed a good way to display arrays of objects in the discover tab. What you get from Kibana is a json string representation of the data and a warning icon stating that, "Objects in arrays are not well supported". The reason for this is that Elasticsearch doesn't care or store in the index mapping that your field is an array of objects. The index mapping is a flattened view of the data. 
 
-![Screenshot](images/not_supported.jpg)
+<img src="images/not_supported.jpg">
 
 Looking at the fields list on the Index Patterns tab reveals this as well. You will find entries for all of the concrete values of your object, but nothing for the containing object. This plugin allows you to create synthetic entries in the fields list. Once an entry for the path you want to display is available in the list, you can apply any field formatter to it, and the Discover table will use that to display the value. 
 
@@ -55,7 +55,7 @@ Looking at the fields list on the Index Patterns tab reveals this as well. You w
 
  3. Refresh the fields list for your index pattern.
     
-    ![Screenshot](images/refresh.jpg)
+    <img src="images/refresh.jpg">
 
  4. Select a field formatter for the new field entry!
 
@@ -111,7 +111,7 @@ Index Mapping:
 
 Indexing the above document into an index named *my_index* will yield the following in the discover tab.
 
-![Screenshot](images/basic_native.jpg)
+<img src="images/basic_native.jpg">
 
 As a trivial example, we can display the whole _book_ object as a single item in the discover tab and choose which of it's fields to include. To do this, we must inject a field into the fields list by editing the **fieldMapperHack:fields** advanced configuration to include our index mapping and field, as seen below.
 
@@ -136,17 +136,17 @@ As a trivial example, we can display the whole _book_ object as a single item in
 ```
 Next we must *Refresh* the field list for the index pattern. This will add a new field entry for the *book* object. Because of this new field, the Discover tab will change the presentation from the two previous fields and only show the book field as a json object.
 
-![Screenshot](images/basic_raw.jpg)
+<img src="images/basic_raw.jpg">
 
 Seeing the *book* object as JSON in the Discover tab is not exactly a desirable result. But it demonstrates the basic behavior this plugin leverages to synthesize field entries so that we can apply a field formatter. 
 
 Lets return to the fields list for our *my_index* index pattern and apply the *Object* field formatter to it. Then lets configure the formatter so that we get a nice non-json view of the object.
 
-![Screenshot](images/basic_format.jpg)
+<img src="images/basic_format.jpg">
 
 Now let's go back to the Discover tab and see the results.
 
-![Screenshot](images/basic_formatted.jpg)
+<img src="images/basic_formatted.jpg">
 
 The usefulness of this particular example is likely low, beyond demonstrating the basic steps of configuration. Next let's look at a more advanced scenario.
 
@@ -222,7 +222,7 @@ Index Mapping:
 
 Indexing the above document into an index named *my_index* will yield the following in the discover tab.
 
-![Screenshot](images/array_native.jpg)
+<img src="images/array_native.jpg">
 
 Now edit the **fieldMapperHack:fields** advanced configuration:
 
@@ -248,11 +248,11 @@ Now edit the **fieldMapperHack:fields** advanced configuration:
 
 Next we must *Refresh* the field list for the index pattern, and apply the *Object* field formatter to new *books.new_releases* field.
 
-![Screenshot](images/array_format.jpg)
+<img src="images/array_format.jpg">
 
 Now let's go back to the Discover tab and see the results.
 
-![Screenshot](images/array_formatted.jpg)
+<img src="images/array_formatted.jpg">
 
 ---
 
