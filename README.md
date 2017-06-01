@@ -31,7 +31,7 @@ Looking at the fields list on the Index Patterns tab reveals this as well. You w
  
     The plugin adds a new property to the *Advanced Settings* table named **fieldMapperHack:fields**. The value is a JSON object which defines include and exclude lists per index pattern. The include and exclude lists values can be regular expressions, and are applied include first then excludes second.
     
-    The index pattern can be named '__\*__', and this entry will be used as the default for all index patterns if a specific entry is not defined.
+    If the index pattern key is named '__\*__', this entry will be used as the default for all index patterns that a specific entry is not defined. In the example JSON below, all index patterns are ignored except for one named *my_index_pattern*. For this index pattern we inject a field entry into the list for the field located at *my.field*.
 
     ```json
     {
@@ -46,7 +46,7 @@ Looking at the fields list on the Index Patterns tab reveals this as well. You w
             },
             "my_index_pattern":{
                 "include":[
-                    "^my.field$"
+                    "my.field"
                 ]
             }
         }
@@ -58,6 +58,201 @@ Looking at the fields list on the Index Patterns tab reveals this as well. You w
     ![Screenshot](images/refresh.jpg)
 
  4. Select a field formatter for the new field entry!
+
+## Examples
+
+#### Formatting a Basic Object
+
+Data Sample:
+
+```json
+{
+  "book": {
+    "author": "John Jenkins",
+    "title": "Building Code"
+  }
+}
+```
+Index Mapping:
+```json
+{
+  "my_index": {
+    "mappings": {
+      "doc": {
+        "properties": {
+          "book": {
+            "properties": {
+              "author": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              },
+              "title": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Indexing the above document into an index named *my_index* will yield the following in the discover tab.
+
+![Screenshot](images/basic_native.jpg)
+
+As a trivial example, we can display the whole _book_ object as a single item in the discover tab and choose which of it's fields to include. To do this, we must inject a field into the fields list by editing the **fieldMapperHack:fields** advanced configuration to include our index mapping and field, as seen below.
+
+```json
+{
+   "index_pattern":{
+      "*":{
+         "include":[
+
+         ],
+         "exclude":[
+            ".*"
+         ]
+      },
+      "my_index":{
+         "include":[
+            "book"
+         ]
+      }
+   }
+}
+```
+Next we must *Refresh* the field list for the index pattern. This will add a new field entry for the *book* object. Because of this new field, the Discover tab will change the presentation from the two previous fields and only show the book field as a json object.
+
+![Screenshot](images/basic_raw.jpg)
+
+Seeing the *book* object as JSON in the Discover tab is not exactly a desirable result. But it demonstrates the basic behavior this plugin leverages to synthesize field entries so that we can apply a field formatter. 
+
+Lets return to the fields list for our *my_index* index pattern and apply the *Object* field formatter to it. Then lets configure the formatter so that we get a nice non-json view of the object.
+
+![Screenshot](images/basic_format.jpg)
+
+Now let's go back to the Discover tab and see the results.
+
+![Screenshot](images/basic_formatted.jpg)
+
+The usefulness of this particular example is likely low, beyond demonstrating the basic steps of configuration. Next let's look at a more advanced scenario.
+
+#### Formatting an Array of Objects
+
+Data Sample:
+```json
+{
+   "new_releases":[
+      {
+         "author":"Yoon Ha Lee",
+         "title":"Raven Stratagem",
+         "cover_art":"https://images-na.ssl-images-amazon.com/images/I/51jo1k%2BX00L._SY160_.jpg"
+      },
+      {
+         "author":"Cixin Liu, Ken Liu",
+         "title":"The Three-Body Problem",
+         "cover_art":"https://images-na.ssl-images-amazon.com/images/I/51ZEDZNEs1L._SY160_.jpg"
+      },
+      {
+         "author":"Rachel Caine",
+         "title":"Stillhouse Lake",
+         "cover_art":"https://images-na.ssl-images-amazon.com/images/I/41leYSjxbyL._SY160_.jpg"
+      }
+   ]
+}
+```
+
+Index Mapping:
+```json
+{
+  "my_index": {
+    "mappings": {
+      "doc": {
+        "properties": {
+          "new_releases": {
+            "properties": {
+              "author": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              },
+              "cover_art": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              },
+              "title": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Indexing the above document into an index named *my_index* will yield the following in the discover tab.
+
+![Screenshot](images/array_native.jpg)
+
+Now edit the **fieldMapperHack:fields** advanced configuration:
+
+```json
+{
+   "index_pattern":{
+      "*":{
+         "include":[
+
+         ],
+         "exclude":[
+            ".*"
+         ]
+      },
+      "my_index":{
+         "include":[
+            "new_releases"
+         ]
+      }
+   }
+}
+```
+
+Next we must *Refresh* the field list for the index pattern, and apply the *Object* field formatter to new *books.new_releases* field.
+
+![Screenshot](images/array_format.jpg)
+
+Now let's go back to the Discover tab and see the results.
+
+![Screenshot](images/array_formatted.jpg)
 
 ---
 
