@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import angular from 'angular';
 import 'ui/courier';
-import uiModules from 'ui/modules';
-import FilterManagerProvider from 'ui/filter_manager';
-import RegistryFieldFormatsProvider from 'ui/registry/field_formats';
+import { uiModules } from 'ui/modules';
+import { FilterManagerProvider } from 'ui/filter_manager';
+import { RegistryFieldFormatsProvider } from 'ui/registry/field_formats';
 
 let app = uiModules.get('kibana/courier');
 
@@ -69,6 +69,8 @@ app.run(function(config, Private) {
                             if (fieldEntry.filterField) {
                                 path = [path, fieldEntry.filterField].join('.');
                             }
+
+                            // TODO Validate       var field = indexPattern.fields.byName[path];
 
                             filters = addFunc.apply(this, [path, entry_values, operation, index]);
                         }

@@ -1,5 +1,4 @@
-
-export default function (_) {
+export function lodashGetPluckMixin(_) {
 
     let toPath = require('lodash/internal/toPath');
     let toObject = require('lodash/internal/toObject');

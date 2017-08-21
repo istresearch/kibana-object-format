@@ -1,8 +1,10 @@
 import _ from 'lodash';
 import angular from 'angular';
+
 import 'ui/courier';
 import 'ui/index_patterns';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
+
 import defaultSettings from './settings/defaults';
 
 let app = uiModules.get('kibana/courier',
@@ -33,22 +35,17 @@ app.run(function(config) {
 /**
  * Patch 'mapper.getFieldsForIndexPattern' to allow us to insert additional fields.
  */
+
 app.run(function(courier, config) {
 
     let indexPatterns = courier.indexPatterns;
-    let mapper = indexPatterns.mapper;
-
-    let fieldsFunc = mapper.getFieldsForIndexPattern;
+    let fieldsFetcher = indexPatterns.fieldsFetcher;
+    let fieldsFunc = fieldsFetcher.fetch;
 
     (function(fieldsFunc) { // Cache the original method
-        mapper.getFieldsForIndexPattern = function() { // Wrap the method
+        fieldsFetcher.fetch = function() { // Wrap the method
 
             let indexPattern = arguments[0]
-            let skipIndexPatternCache = arguments[1]
-
-            // If we're going to get a cache hit, just use it
-            let cache = mapper.cache.get(indexPattern.id);
-            if (cache) return Promise.resolve(cache);
 
             let promise = fieldsFunc.apply(this, arguments);
 
@@ -110,16 +107,13 @@ app.run(function(courier, config) {
                     fields.push({
                         name: path,
                         aggregatable: false,
-                        searchable: false,
+                        searchable: true,
                         analyzed: false,
                         doc_values: false,
                         indexed: true,
                         type: "string"
                     });
                 });
-
-                // Update the mapper cache since we edited the list
-                mapper.cache.set(indexPattern.id, fields);
 
                 return fields;
             });

@@ -1,4 +1,8 @@
+<% if (!filtered) { %>
+<table class="object-table object-table-no-filter">
+<% } else { %>
 <table class="object-table">
+<% } %>
     <tbody>
 <%
 _.forEach(fields, function(field, index) {
@@ -18,13 +22,24 @@ _.forEach(fields, function(field, index) {
 </table>
 <!-- [object field formatter] Change the 'white-space' css attribute of our containing div, and remove the warning icon -->
 <script>
-var parent = $("table.object-table").parent()
+var parent = $("table.object-table").parent().parent()
 parent.css("white-space", "nowrap");
 
 if (parent.hasClass("doc-viewer-value")) {
     var siblings = parent.siblings("i.fa-warning")
     if (siblings) {
         siblings.remove();
+    }
+}
+</script>
+<!-- [object field formatter] Hide the filter buttons if this formatter doesn't have filtering enabled -->
+<script>
+var parent = $("table.object-table-no-filter").parent().parent().parent()
+
+if (parent.hasClass("discover-table-datafield")) {
+    var cell_filter = parent.children(".table-cell-filter")
+    if (cell_filter) {
+        cell_filter.empty();
     }
 }
 </script>
