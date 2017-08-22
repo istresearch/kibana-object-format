@@ -56,11 +56,15 @@ app.run(function(config, Private) {
 
                                 if (_.isArray(plucked)) {
                                     _.forEach(plucked, function(v) {
-                                        entry_values.push(v);
+                                        if (v) {
+                                            entry_values.push(v);
+                                        }
                                     });
                                 }
                                 else {
-                                    entry_values.push(plucked);
+                                    if (plucked) {
+                                        entry_values.push(plucked);
+                                    }
                                 }
                             });
 
