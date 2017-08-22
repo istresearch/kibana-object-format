@@ -1,20 +1,30 @@
+import { RegistryFieldFormatsProvider } from 'ui/registry/field_formats';
 import _ from 'lodash';
-import IndexPatternsFieldFormatProvider from 'ui/index_patterns/_field_format/field_format';
+import { IndexPatternsFieldFormatProvider } from 'ui/index_patterns/_field_format/field_format';
 import { getHighlightHtml } from 'ui/highlight';
 import './editors/object.less';
+
 import objectTemplate from './editors/object.html';
+import format_html from './templates/object_format.html';
+import image_html from './templates/object_image.html';
+import link_html from './templates/object_link.html';
+import text_html from './templates/object_text.html';
+
+import { lodashOopMixin } from 'ui/utils/lodash-mixins/oop';
+import { lodashStringMixin } from 'ui/utils/lodash-mixins/string';
+import { lodashGetPluckMixin } from './lib/lodash-mixins/get_pluck';
 
 function ObjectFormatProvider(Private) {
 
-    require('ui/utils/lodash-mixins/oop')(_);
-    require('ui/utils/lodash-mixins/string')(_);
-    require('./lib/lodash-mixins/get_pluck')(_);
+    lodashOopMixin(_);
+    lodashStringMixin(_);
+    lodashGetPluckMixin(_);
 
     const FieldFormat = Private(IndexPatternsFieldFormatProvider);
-    const vis_template = _.template(require('./templates/object_format.html'))
-    const image_template = _.template(require('./templates/object_image.html'))
-    const link_template = _.template(require('./templates/object_link.html'))
-    const text_template = _.template(require('./templates/object_text.html'))
+    const vis_template = _.template(format_html)
+    const image_template = _.template(image_html)
+    const link_template = _.template(link_html)
+    const text_template = _.template(text_html)
 
     const DEFAULT_VALUES = {
         label: null, // Optional data label
@@ -97,7 +107,8 @@ function ObjectFormatProvider(Private) {
 
             _.forEach(val, function(value){
                 let fieldModels = _get_field_models(value, field, hit, basePath, objectFields);
-                htmlSnippets.push(vis_template({fields: fieldModels}));
+                htmlSnippets.push(vis_template({filtered: fieldModels.filtered,
+                                                fields: fieldModels.fields}));
             });
 
             return htmlSnippets.join('\n');
@@ -106,6 +117,7 @@ function ObjectFormatProvider(Private) {
 
     const _get_field_models = function (value, field, hit, basePath, objectFields) {
 
+        let filtered = false;
         let fields = [];
 
         // Apply each field configured for the formatter to the value
@@ -115,6 +127,7 @@ function ObjectFormatProvider(Private) {
 
             if (objectField.label) label = objectField.label + ": ";
             if (objectField.path) fieldPath = objectField.path;
+            if (objectField.filtered) filtered = objectField.filtered;
 
             // Get the value from the field path
             let fieldValues = _.getPluck(value, fieldPath);
@@ -181,7 +194,7 @@ function ObjectFormatProvider(Private) {
             });
         });
 
-        return fields;
+        return {filtered: filtered, fields: fields};
     };
 
     const _field_to_html = function (fieldModel) {
@@ -226,4 +239,4 @@ function ObjectFormatProvider(Private) {
     return _ObjectFormat;
 }
 
-require('ui/registry/field_formats').register(ObjectFormatProvider);
+RegistryFieldFormatsProvider.register(ObjectFormatProvider);
