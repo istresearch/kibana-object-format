@@ -1,18 +1,19 @@
 import _ from 'lodash';
 import angular from 'angular';
-
 import 'ui/courier';
 import 'ui/index_patterns';
+import 'ui/modals/confirm_modal_promise';
 import { uiModules } from 'ui/modules';
 
-let app = uiModules.get('app/kibana', ['kibana/courier']);
+let app = uiModules.get('app/kibana-object-formatter', [
+        'kibana/index_patterns'
+    ]);
 
 /**
  * Patch 'fieldsFetcher.fetch' to allow us to insert additional fields.
  */
-app.run(function(courier, config) {
+app.run(['indexPatterns', 'config', function(indexPatterns, config) {
 
-    let indexPatterns = courier.indexPatterns;
     let fieldsFetcher = indexPatterns.fieldsFetcher;
     let fieldsFunc = fieldsFetcher.fetch;
 
@@ -93,4 +94,4 @@ app.run(function(courier, config) {
             });
         };
     })(fieldsFunc);
-});
+}]);
