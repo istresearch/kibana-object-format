@@ -5,7 +5,7 @@ import { uiModules } from 'ui/modules';
 import { FilterManagerProvider } from 'ui/filter_manager';
 import { RegistryFieldFormatsProvider } from 'ui/registry/field_formats';
 
-let app = uiModules.get('kibana/courier');
+let app = uiModules.get('app/kibana-object-formatter');
 
 /**
  * Patch 'FilterManager' to allow us to hand-craft filters for fields
