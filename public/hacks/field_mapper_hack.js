@@ -7,8 +7,7 @@ import { uiModules } from 'ui/modules';
 
 import defaultSettings from './settings/defaults';
 
-let app = uiModules.get('kibana/courier',
-                        'kibana/index_patterns');
+let app = uiModules.get('app/kibana', ['kibana/courier']);
 
 /**
  * Add an entry to the Advanced Settings table.
@@ -33,9 +32,8 @@ app.run(function(config) {
 });
 
 /**
- * Patch 'mapper.getFieldsForIndexPattern' to allow us to insert additional fields.
+ * Patch 'fieldsFetcher.fetch' to allow us to insert additional fields.
  */
-
 app.run(function(courier, config) {
 
     let indexPatterns = courier.indexPatterns;

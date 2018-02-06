@@ -74,8 +74,6 @@ app.run(function(config, Private) {
                                 path = [path, fieldEntry.filterField].join('.');
                             }
 
-                            // TODO Validate       var field = indexPattern.fields.byName[path];
-
                             filters = addFunc.apply(this, [path, entry_values, operation, index]);
                         }
                     });

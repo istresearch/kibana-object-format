@@ -108,7 +108,8 @@ function ObjectFormatProvider(Private) {
             _.forEach(val, function(value){
                 let fieldModels = _get_field_models(value, field, hit, basePath, objectFields);
                 htmlSnippets.push(vis_template({filtered: fieldModels.filtered,
-                                                fields: fieldModels.fields}));
+                                                fields: fieldModels.fields,
+                                                uid: Math.floor((Math.random() * 1000000) + 1)}));
             });
 
             return htmlSnippets.join('\n');

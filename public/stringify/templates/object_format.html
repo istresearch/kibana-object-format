@@ -1,7 +1,7 @@
 <% if (!filtered) { %>
-<table class="object-table object-table-no-filter">
+<table class="object-table object-table-no-filter <%= uid %>">
 <% } else { %>
-<table class="object-table">
+<table class="object-table <%= uid %>">
 <% } %>
     <tbody>
 <%
@@ -22,24 +22,37 @@ _.forEach(fields, function(field, index) {
 </table>
 <!-- [object field formatter] Change the 'white-space' css attribute of our containing div, and remove the warning icon -->
 <script>
-var parent = $("table.object-table").parent().parent()
-parent.css("white-space", "nowrap");
+// Run this after angular has done it's thing
+setTimeout(() => {
+    // Discover table row
+    $(".<%= uid %>").closest(".truncate-by-height").css("white-space", "nowrap");
 
-if (parent.hasClass("doc-viewer-value")) {
-    var siblings = parent.siblings("i.fa-warning")
-    if (siblings) {
-        siblings.remove();
-    }
-}
+    // Discover expanded row table
+    $(".<%= uid %>").closest("div.doc-viewer-value").css("white-space", "nowrap");
+    $(".<%= uid %>").closest("div.doc-viewer-value").siblings("i.fa-warning").remove();
+}, 0);
 </script>
 <!-- [object field formatter] Hide the filter buttons if this formatter doesn't have filtering enabled -->
 <script>
-var parent = $("table.object-table-no-filter").parent().parent().parent()
+// Run this after angular has done it's thing
+setTimeout(() => {
+    // Discover table row
+    $(".object-table-no-filter.<%= uid %>")
+        .closest("td.discover-table-datafield")
+        .children(".table-cell-filter")
+        .empty();
 
-if (parent.hasClass("discover-table-datafield")) {
-    var cell_filter = parent.children(".table-cell-filter")
-    if (cell_filter) {
-        cell_filter.empty();
+    // Discover expanded row table
+    var buttonsCell = $(".object-table-no-filter.<%= uid %>")
+                          .closest("div.doc-viewer-value")
+                          .closest("td")
+                          .siblings("td.doc-viewer-buttons");
+
+    if (buttonsCell) {
+        var span = buttonsCell.children("span:has(i.fa-search-plus)");
+        span.replaceWith(
+            "<span><i class=\"fa fa-search-plus text-muted\"></i><i class=\"fa fa-search-minus text-muted\"></span>"
+        );
     }
-}
+}, 0);
 </script>
