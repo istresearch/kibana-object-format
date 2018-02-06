@@ -9,6 +9,7 @@ if(field.width) {
 image_attributes += 'width: ' + field.width + 'px;'
 }
 _.forEach(field.values, function(value, index) {
+if (value.value) {
 %>
 <a href="<%- value.value %>" target="_blank">
     <div class=image-container
@@ -19,5 +20,9 @@ _.forEach(field.values, function(value, index) {
     </div>
 </a>
 <%
-});
+} else {
+%>
+<span style="white-space: pre;"> - </span>
+<%
+}});
 %>

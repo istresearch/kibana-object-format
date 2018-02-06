@@ -1,7 +1,12 @@
 <%
 _.forEach(field.values, function(value, index) {
+if (value.value) {
 %>
 <div><a href="<%- value.value %>" target="_blank"><%- value.display %></a></div>
 <%
-});
+} else {
+%>
+<span style="white-space: pre;"> - </span>
+<%
+}});
 %>

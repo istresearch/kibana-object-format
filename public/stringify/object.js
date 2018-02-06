@@ -9,6 +9,7 @@ import format_html from './templates/object_format.html';
 import image_html from './templates/object_image.html';
 import link_html from './templates/object_link.html';
 import text_html from './templates/object_text.html';
+import empty_html from './templates/object_empty.html';
 
 import { lodashOopMixin } from 'ui/utils/lodash-mixins/oop';
 import { lodashStringMixin } from 'ui/utils/lodash-mixins/string';
@@ -25,6 +26,7 @@ function ObjectFormatProvider(Private) {
     const image_template = _.template(image_html)
     const link_template = _.template(link_html)
     const text_template = _.template(text_html)
+    const empty_template = _.template(empty_html)
 
     const DEFAULT_VALUES = {
         label: null, // Optional data label
@@ -98,21 +100,31 @@ function ObjectFormatProvider(Private) {
                 val = [val];
             }
 
+            // Filter out any null or empty entries
+            val = $.grep(val, function(n){ return n == 0 || n });
+
             // If we have a limit on this list, impose it now
             if (limit) {
                 val = _.slice(val, 0, limit);
             }
 
-            let htmlSnippets = [];
+            if (val.length > 0) {
+                let htmlSnippets = [];
 
-            _.forEach(val, function(value){
-                let fieldModels = _get_field_models(value, field, hit, basePath, objectFields);
-                htmlSnippets.push(vis_template({filtered: fieldModels.filtered,
-                                                fields: fieldModels.fields,
-                                                uid: Math.floor((Math.random() * 1000000) + 1)}));
-            });
+                _.forEach(val, function(value){
+                    if (value) {
+                        let fieldModels = _get_field_models(value, field, hit, basePath, objectFields);
+                        htmlSnippets.push(vis_template({filtered: fieldModels.filtered,
+                                                        fields: fieldModels.fields,
+                                                        uid: Math.floor((Math.random() * 1000000) + 1)}));
+                    }
+                });
 
-            return htmlSnippets.join('\n');
+                return htmlSnippets.join('\n');
+            }
+            else {
+                return empty_template();
+            }
         }
     };
 
