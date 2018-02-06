@@ -2,7 +2,7 @@
 export default function (kibana) {
     return new kibana.Plugin({
 
-        require: ['elasticsearch', 'kibana'],
+        require: ['kibana'],
 
         uiExports: {
             visTypes: [
@@ -16,7 +16,7 @@ export default function (kibana) {
                 'fieldMapperHack:fields': {
                     value: '{\n  "index_pattern": {\n    "*": {\n      "include": [],\n      "exclude": [".*"]\n    }\n  }\n}',
                     type: 'json',
-                    description: 'Define the index patterns and fields to allow you to configure field formatters for arrays of objects. See the <a href="https://github.com/istresearch/kibana-object-format" target="_blank">kibana-object-formatter</a> plugin project.'
+                    description: 'Configure field formatters for objects and arrays of objects by declaring the patterns and fields. See the <a href="https://github.com/istresearch/kibana-object-format" target="_blank">kibana-object-formatter</a> plugin project.'
                 }
             }
         }
