@@ -5,31 +5,7 @@ import 'ui/courier';
 import 'ui/index_patterns';
 import { uiModules } from 'ui/modules';
 
-import defaultSettings from './settings/defaults';
-
 let app = uiModules.get('app/kibana', ['kibana/courier']);
-
-/**
- * Add an entry to the Advanced Settings table.
- */
-app.run(function(config) {
-
-    const settings = defaultSettings();
-
-    _.forIn(settings, function(value, key){
-
-        if (!config.isDeclared(key)) {
-            config.set(key, value['value']);
-        }
-
-        // If the user deletes entry from the UI, set the default value again
-        config.watch(key, function(newVal, huh, key, config) {
-            if (newVal === undefined) {
-                config.set(key, settings[key]['value']);
-            }
-        });
-    })
-});
 
 /**
  * Patch 'fieldsFetcher.fetch' to allow us to insert additional fields.
@@ -70,7 +46,7 @@ app.run(function(courier, config) {
 
                 // 2) Test the discovered field names against the configuration
                 let settings = config.get('fieldMapperHack:fields');
-                settings = JSON.parse(settings)['index_pattern'];
+                settings = settings['index_pattern'];
 
                 let match = { includes: [], excludes: []};
 
