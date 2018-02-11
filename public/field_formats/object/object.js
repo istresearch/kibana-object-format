@@ -1,12 +1,12 @@
 import { RegistryFieldFormatsProvider } from 'ui/registry/field_formats';
 import { RegistryFieldFormatEditorsProvider } from 'ui/registry/field_format_editors';
-import { getHighlightHtml } from '../common/highlight/index';
+import { getHighlightHtml } from '../../common/highlight/index';
 
 import _ from 'lodash';
 
-import './editors/object.less';
+import './editor/object.less';
 
-import objectTemplate from './editors/object.html';
+import objectTemplate from './editor/object.html';
 import format_html from './templates/object_format.html';
 import image_html from './templates/object_image.html';
 import link_html from './templates/object_link.html';
@@ -14,7 +14,7 @@ import text_html from './templates/object_text.html';
 import empty_html from './templates/object_empty.html';
 
 import { lodashOopMixin } from 'ui/utils/lodash-mixins/oop';
-import { lodashGetPluckMixin } from './lib/lodash-mixins/get_pluck';
+import { lodashGetPluckMixin } from '../../common/lodash-mixins/get_pluck';
 
 lodashOopMixin(_);
 lodashGetPluckMixin(_);

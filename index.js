@@ -6,7 +6,7 @@ export default function (kibana) {
 
         uiExports: {
             fieldFormats: [
-                'plugins/kibana_object_format/stringify/object'
+                'plugins/kibana_object_format/field_formats/object/object'
             ],
             hacks: [
                 'plugins/kibana_object_format/hacks/field_mapper_hack',
