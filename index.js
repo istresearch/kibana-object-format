@@ -5,7 +5,7 @@ export default function (kibana) {
         require: ['kibana'],
 
         uiExports: {
-            visTypes: [
+            fieldFormats: [
                 'plugins/kibana_object_format/stringify/object'
             ],
             hacks: [
