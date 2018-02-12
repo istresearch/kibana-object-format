@@ -45,7 +45,7 @@ app.run(function(config, Private) {
                         value = [value];
                     }
 
-                    _.forEach(params.fields, function(fieldEntry) {
+                    _.forEach(params.fields, _.bind(function(fieldEntry) {
                         if (fieldEntry.filtered) {
                             let path = fieldEntry.path;
                             let entry_values = [];
@@ -76,7 +76,7 @@ app.run(function(config, Private) {
 
                             filters = addFunc.apply(this, [path, entry_values, operation, index]);
                         }
-                    });
+                    }, filterManager));
                 });
 
                 return filters;
