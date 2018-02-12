@@ -8,7 +8,7 @@ This Kibana plugin enables you to configure field formatters for arrays of objec
 
 ## Features
 
- - Kibana 5.x compatible
+ - Kibana 6.x and 5.x compatible
  - Enables field formatting for objects and arrays of objects
  - Includes a general purpose Object field formatter to fit most needs with:
     - Hit highlighting
@@ -32,6 +32,8 @@ Looking at the fields list on the Index Patterns tab reveals this as well. You w
     The plugin adds a new property to the *Advanced Settings* table named **fieldMapperHack:fields**. The value is a JSON object which defines include and exclude lists per index pattern. The include and exclude lists values can be regular expressions, and are applied include first then excludes second.
     
     If the index pattern key is named '__\*__', this entry will be used as the default for all index patterns that a specific entry is not defined. In the example JSON below, all index patterns are ignored except for one named *my_index_pattern*. For this index pattern we inject a field entry into the list for the field located at *my.field*.
+    
+**_The ID of the index pattern must be used in the configuration, not the display name._**
 
     ```json
     {
