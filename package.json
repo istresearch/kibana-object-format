@@ -6,7 +6,7 @@
   "homepage": "https://github.com/istresearch/kibana-object-format",
   "main": "index.js",
   "kibana": {
-    "version": "6.2.1"
+    "version": "6.0.1"
   },
   "scripts": {
     "lint": "eslint",
@@ -17,12 +17,12 @@
     "postinstall": "plugin-helpers postinstall"
   },
   "devDependencies": {
-    "@elastic/eslint-config-kibana": "0.15.0",
+    "@elastic/eslint-config-kibana": "0.6.1",
     "@elastic/plugin-helpers": "^6.0.0",
-    "babel-eslint": "8.1.2",
+    "babel-eslint": "7.2.3",
     "lodash": "3.10.1",
     "chai": "3.5.0",
-    "eslint": "4.14.0",
-    "eslint-plugin-mocha": "4.11.0"
+    "eslint": "3.19.0",
+    "eslint-plugin-mocha": "4.9.0"
   }
 }
