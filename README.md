@@ -35,7 +35,7 @@ Looking at the fields list on the Index Patterns tab reveals this as well. You w
     
 **_The ID of the index pattern must be used in the configuration, not the display name._**
 
-    ```json
+ ```json
     {
         "index_pattern":{
             "*":{
@@ -53,7 +53,7 @@ Looking at the fields list on the Index Patterns tab reveals this as well. You w
             }
         }
     }
-    ```
+ ```
 
  3. Refresh the fields list for your index pattern.
     
