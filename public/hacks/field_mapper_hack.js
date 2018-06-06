@@ -46,7 +46,8 @@ app.run(['indexPatterns', 'config', function(indexPatterns, config) {
                 paths = _.uniq(_.difference(paths, mappingNames));
 
                 // 2) Test the discovered field names against the configuration
-                let settings = config.get('fieldMapperHack:fields');
+                let defaultConfig = "{\n  \"index_pattern\": {\n    \"*\": {\n      \"include\": [],\n      \"exclude\": [\".*\"]\n    }\n  }\n}"
+                let settings = config.get('fieldMapperHack:fields', defaultConfig);
                 settings = settings['index_pattern'];
 
                 let match = { includes: [], excludes: []};
