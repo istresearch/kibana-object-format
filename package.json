@@ -6,7 +6,7 @@
   "homepage": "https://github.com/istresearch/kibana-object-format",
   "main": "index.js",
   "kibana": {
-    "version": "6.2.3"
+    "version": "6.2.4"
   },
   "scripts": {
     "lint": "eslint",
