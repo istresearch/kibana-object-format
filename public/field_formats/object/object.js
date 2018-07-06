@@ -1,5 +1,3 @@
-import { RegistryFieldFormatsProvider } from 'ui/registry/field_formats';
-import { RegistryFieldFormatEditorsProvider } from 'ui/registry/field_format_editors';
 import { getHighlightHtml } from '../../common/highlight/index';
 
 import _ from 'lodash';
@@ -13,7 +11,7 @@ import link_html from './templates/object_link.html';
 import text_html from './templates/object_text.html';
 import empty_html from './templates/object_empty.html';
 
-import { lodashOopMixin } from 'ui/utils/lodash-mixins/oop';
+import { lodashOopMixin } from '../../common/lodash-mixins/oop';
 import { lodashGetPluckMixin } from '../../common/lodash-mixins/get_pluck';
 
 lodashOopMixin(_);
@@ -265,6 +263,3 @@ export function objectEditor() {
         }
     };
  }
-
-RegistryFieldFormatsProvider.register(createObjectFormat);
-RegistryFieldFormatEditorsProvider.register(objectEditor);
