@@ -25,7 +25,7 @@ Looking at the fields list on the Index Patterns tab reveals this as well. You w
 
 ## Instructions
 
- 1. Install the plugin following Kibana's [official documentation](https://www.elastic.co/guide/en/kibana/current/_installing_plugins.html).
+ 1. Install the plugin following Kibana's [official documentation](https://www.elastic.co/guide/en/kibana/6.x/install-plugin.html).
 
  2. Configure the index pattern to include the additional field(s).
  
