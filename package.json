@@ -1,6 +1,6 @@
 {
   "name": "kibana_object_format",
-  "version": "0.1.3",
+  "version": "0.1.5",
   "description": "Enables objects in arrays to be configured with a field formatter.",
   "license": "Apache 2.0",
   "homepage": "https://github.com/istresearch/kibana-object-format",
