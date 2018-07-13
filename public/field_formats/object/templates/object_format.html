@@ -25,9 +25,13 @@ _.forEach(fields, function(field, index) {
 // Run this after angular has done it's thing
 setTimeout(() => {
     // Discover table row
-    $(".<%= uid %>").closest(".truncate-by-height").css("white-space", "nowrap");
+    // Only set nowrap if parent is td.discover-table-datafield, do nothing if td.discover-table-sourcefield
+    $(".<%= uid %>")
+        .closest("td.discover-table-datafield")
+        .children(".truncate-by-height")
+        .css("white-space", "nowrap");
 
-    // Discover expanded row table
+    // Discover table expanded row
     $(".<%= uid %>").closest("div.doc-viewer-value").css("white-space", "nowrap");
     $(".<%= uid %>").closest("div.doc-viewer-value").siblings("i.fa-warning").remove();
 }, 0);
@@ -42,7 +46,7 @@ setTimeout(() => {
         .children(".table-cell-filter")
         .empty();
 
-    // Discover expanded row table
+    // Discover table expanded row
     var buttonsCell = $(".object-table-no-filter.<%= uid %>")
                           .closest("div.doc-viewer-value")
                           .closest("td")
