@@ -17,11 +17,11 @@ import { lodashGetPluckMixin } from '../../common/lodash-mixins/get_pluck';
 lodashOopMixin(_);
 lodashGetPluckMixin(_);
 
-const vis_template = _.template(format_html)
-const image_template = _.template(image_html)
-const link_template = _.template(link_html)
-const text_template = _.template(text_html)
-const empty_template = _.template(empty_html)
+const vis_template = _.template(format_html);
+const image_template = _.template(image_html);
+const link_template = _.template(link_html);
+const text_template = _.template(text_html);
+const empty_template = _.template(empty_html);
 
 const DEFAULT_VALUES = {
     label: null, // Optional data label
@@ -57,24 +57,24 @@ export function createObjectFormat(FieldFormat) {
             };
         }
 
-        _get_field_models(value, field, hit, basePath, objectFields) {
+        _getFieldModels(value, field, hit, basePath, objectFields) {
 
             let filtered = false;
-            let fields = [];
+            const fields = [];
 
             // Apply each field configured for the formatter to the value
-            _.forEach(objectFields, _.bind(function(objectField) {
+            _.forEach(objectFields, _.bind(function (objectField) {
                 let label = '';
                 let fieldPath = '';
 
-                if (objectField.label) label = objectField.label + ": ";
+                if (objectField.label) label = objectField.label + ': ';
                 if (objectField.path) fieldPath = objectField.path;
                 if (objectField.filtered) filtered = objectField.filtered;
 
                 // Get the value from the field path
                 let fieldValues = _.getPluck(value, fieldPath);
 
-                if (objectField.type == 'text') {
+                if (objectField.type === 'text') {
                     // We generate a nice comma delimited list, like the built in String does.
                     if (_.isArray(fieldValues)) {
                         if (objectField.limit) {
@@ -82,7 +82,7 @@ export function createObjectFormat(FieldFormat) {
                         }
 
                         fieldValues = _(fieldValues)
-                            .map( item => ( _.isObject(item) ? JSON.stringify(item) : item) )
+                            .map(item => (_.isObject(item) ? JSON.stringify(item) : item))
                             .join(', ');
                     }
                     else if (_.isObject(fieldValues)) {
@@ -99,13 +99,13 @@ export function createObjectFormat(FieldFormat) {
                     fieldValues = _.slice(fieldValues, 0, objectField.limit);
                 }
 
-                let fullPath = this._get_full_path(basePath, field, objectField.path, null);
-                let filterPath = this._get_full_path(basePath, field, objectField.path, objectField.filterField);
-                let valueModels = [];
+                const fullPath = this._getFullPath(basePath, field, objectField.path, null);
+                const filterPath = this._getFullPath(basePath, field, objectField.path, objectField.filterField);
+                const valueModels = [];
 
-                _.forEach(fieldValues, _.bind(function(fieldValue) {
+                _.forEach(fieldValues, _.bind(function (fieldValue) {
 
-                    let valueModel = {
+                    const valueModel = {
                         value: fieldValue,
                         display: _.escape(fieldValue)
                     };
@@ -120,7 +120,7 @@ export function createObjectFormat(FieldFormat) {
                     valueModels.push(valueModel);
                 }, this));
 
-                let fieldHtml = this._field_to_html({
+                const fieldHtml = this._fieldToHtml({
                     label: label,
                     formatType: objectField.type,
                     values: valueModels,
@@ -136,34 +136,34 @@ export function createObjectFormat(FieldFormat) {
                 });
             }, this));
 
-            return {filtered: filtered, fields: fields};
-        };
+            return { filtered: filtered, fields: fields };
+        }
 
-        _field_to_html(fieldModel) {
+        _fieldToHtml(fieldModel) {
 
             let html = null;
 
             switch (fieldModel.formatType) {
                 case 'image':
-                    html = image_template({field: fieldModel})
+                    html = image_template({ field: fieldModel });
                     break;
 
                 case 'link':
-                    html = link_template({field: fieldModel})
+                    html = link_template({ field: fieldModel });
                     break;
 
                 case 'text':
                 default:
-                    html = text_template({field: fieldModel})
+                    html = text_template({ field: fieldModel });
                     break;
             }
 
             return html;
-        };
+        }
 
-        _get_full_path(basePath, field, valuePath, filterField) {
+        _getFullPath(basePath, field, valuePath, filterField) {
 
-            let parts = [field.name];
+            const parts = [field.name];
 
             if (basePath) {
                 parts.push(basePath);
@@ -176,7 +176,7 @@ export function createObjectFormat(FieldFormat) {
             }
 
             return parts.join('.');
-        };
+        }
 
         asPrettyString(val) {
             if (val === null || val === undefined) return ' - ';
@@ -185,7 +185,7 @@ export function createObjectFormat(FieldFormat) {
                     case 'object': return JSON.stringify(val, null, '  ');
                     default: return '' + val;
             }
-        };
+        }
     }
 
     ObjectFormat.prototype._convert = {
@@ -193,9 +193,9 @@ export function createObjectFormat(FieldFormat) {
             return this.asPrettyString(val);
         },
         html(val, field, hit) {
-            let basePath = this.param('basePath');
-            let objectFields = this.param('fields');
-            let limit = this.param('limit');
+            const basePath = this.param('basePath');
+            const objectFields = this.param('fields');
+            const limit = this.param('limit');
 
             if (basePath) {
                 val = _.get(val, basePath);
@@ -206,7 +206,7 @@ export function createObjectFormat(FieldFormat) {
             }
 
             // Filter out any null or empty entries
-            val = $.grep(val, function(n){ return n == 0 || n });
+            val = $.grep(val, function (n) { return n === 0 || n });
 
             // If we have a limit on this list, impose it now
             if (limit) {
@@ -214,14 +214,14 @@ export function createObjectFormat(FieldFormat) {
             }
 
             if (val.length > 0) {
-                let htmlSnippets = [];
+                const htmlSnippets = [];
 
-                _.forEach(val, _.bind(function(value){
+                _.forEach(val, _.bind(function (value) {
                     if (value) {
-                        let fieldModels = this._get_field_models(value, field, hit, basePath, objectFields);
-                        htmlSnippets.push(vis_template({filtered: fieldModels.filtered,
-                                                        fields: fieldModels.fields,
-                                                        uid: Math.floor((Math.random() * 1000000) + 1)}));
+                        const fieldModels = this._getFieldModels(value, field, hit, basePath, objectFields);
+                        htmlSnippets.push(vis_template({ filtered: fieldModels.filtered,
+                                                         fields: fieldModels.fields,
+                                                         uid: Math.floor((Math.random() * 1000000) + 1) }));
                     }
                 }, this));
 
@@ -241,7 +241,7 @@ export function objectEditor() {
         formatId: 'ist-object',
         template: objectTemplate,
         controllerAs: 'object',
-        controller: function ($scope, chrome) {
+        controller: function ($scope) {
 
             this.formatTypes = [
                 { id: 'text', name: 'Text' },
