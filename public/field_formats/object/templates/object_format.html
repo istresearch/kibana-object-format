@@ -23,7 +23,7 @@ _.forEach(fields, function(field, index) {
 <!-- [object field formatter] Change the 'white-space' css attribute of our containing div, and remove the warning icon -->
 <script>
 // Run this after angular has done it's thing
-setTimeout(() => {
+setTimeout((function () {
     // Discover table row
     // Only set nowrap if parent is td.discover-table-datafield, do nothing if td.discover-table-sourcefield
     $(".<%= uid %>")
@@ -34,12 +34,12 @@ setTimeout(() => {
     // Discover table expanded row
     $(".<%= uid %>").closest("div.doc-viewer-value").css("white-space", "nowrap");
     $(".<%= uid %>").closest("div.doc-viewer-value").siblings("i.fa-warning").remove();
-}, 0);
+} ), 0);
 </script>
 <!-- [object field formatter] Hide the filter buttons if this formatter doesn't have filtering enabled -->
 <script>
 // Run this after angular has done it's thing
-setTimeout(() => {
+setTimeout((function () {
     // Discover table row
     $(".object-table-no-filter.<%= uid %>")
         .closest("td.discover-table-datafield")
@@ -58,5 +58,5 @@ setTimeout(() => {
             "<span><i class=\"fa fa-search-plus text-muted\" style=\"padding-right: 7px;\"></i><i class=\"fa fa-search-minus text-muted\"></span>"
         );
     }
-}, 0);
+} ), 0);
 </script>
