@@ -1,7 +1,7 @@
 export function lodashGetPluckMixin(_) {
 
-    let toPath = require('lodash/internal/toPath');
-    let toObject = require('lodash/internal/toObject');
+    const toPath = require('lodash/internal/toPath');
+    const toObject = require('lodash/internal/toObject');
 
     /**
     * The base implementation of `get` without support for string paths
@@ -24,13 +24,13 @@ export function lodashGetPluckMixin(_) {
         }
 
         let index = 0;
-        let length = path.length;
+        const length = path.length;
 
         while (object != null && index < length) {
-            let key = path[index++];
+            const key = path[index++];
 
             if (_.isArray(object) && !_.has(object, key)) {
-                object = _.map(object, _.property(_.slice(path, index-1)));
+                object = _.map(object, _.property(_.slice(path, index - 1)));
                 index = length;
             }
             else {
@@ -38,7 +38,7 @@ export function lodashGetPluckMixin(_) {
             }
         }
 
-        return (index && index == length) ? object : undefined;
+        return (index && index === length) ? object : undefined;
     }
 
     _.mixin(_, {
@@ -72,7 +72,7 @@ export function lodashGetPluckMixin(_) {
          * // => 'default'
          */
         getPluck: function (object, path, defaultValue) {
-            let result = object == null ? undefined : baseGetWithPluck(object, toPath(path), path + '');
+            const result = object == null ? undefined : baseGetWithPluck(object, toPath(path), path + '');
             return result === undefined ? defaultValue : result;
         }
     });

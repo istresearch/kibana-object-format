@@ -1,42 +1,41 @@
 import _ from 'lodash';
-import angular from 'angular';
 import 'ui/courier';
 import { uiModules } from 'ui/modules';
 import { FilterManagerProvider } from 'ui/filter_manager';
 import { RegistryFieldFormatsProvider } from 'ui/registry/field_formats';
 
-let app = uiModules.get('app/kibana-object-formatter');
+const app = uiModules.get('app/kibana-object-formatter');
 
 /**
  * Patch 'FilterManager' to allow us to hand-craft filters for fields
  * that use the Object formatter.
  */
-app.run(function(config, Private) {
+app.run(function (config, Private) {
 
     const filterManager = Private(FilterManagerProvider);
     const _ObjectFormat = Private(RegistryFieldFormatsProvider).getType('ist-object');
 
-    let addFunc = filterManager.add;
+    const addFunc = filterManager.add;
 
-    (function(addFunc) { // Cache the original method
-        filterManager.add = function() { // Wrap the method
+    (function (addFunc) { // Cache the original method
+        filterManager.add = function () { // Wrap the method
 
-            let field = arguments[0];
+            const field = arguments[0];
             let values = arguments[1];
-            let operation = arguments[2];
-            let index = arguments[3];
+            const operation = arguments[2];
+            const index = arguments[3];
 
             // If the field is one of our special Object fields
             if (field && field.format && field.format.type === _ObjectFormat) {
-                let params = field.format._params;
-                let basePath = params.basePath;
+                const params = field.format._params;
+                const basePath = params.basePath;
                 let filters = null;
 
                 if (!_.isArray(values)) {
                     values = [values];
                 }
 
-                _.forEach(values, function(value) {
+                _.forEach(values, function (value) {
                     if (basePath) {
                         value = _.get(value, basePath);
                     }
@@ -45,25 +44,25 @@ app.run(function(config, Private) {
                         value = [value];
                     }
 
-                    _.forEach(params.fields, _.bind(function(fieldEntry) {
+                    _.forEach(params.fields, _.bind(function (fieldEntry) {
                         if (fieldEntry.filtered) {
                             let path = fieldEntry.path;
-                            let entry_values = [];
+                            const entryValues = [];
 
-                            _.forEach(value, function(value_entry) {
+                            _.forEach(value, function (valueEntry) {
 
-                                let plucked = _.getPluck(value_entry, path);
+                                const plucked = _.getPluck(valueEntry, path);
 
                                 if (_.isArray(plucked)) {
-                                    _.forEach(plucked, function(v) {
+                                    _.forEach(plucked, function (v) {
                                         if (v) {
-                                            entry_values.push(v);
+                                            entryValues.push(v);
                                         }
                                     });
                                 }
                                 else {
                                     if (plucked) {
-                                        entry_values.push(plucked);
+                                        entryValues.push(plucked);
                                     }
                                 }
                             });
@@ -74,7 +73,7 @@ app.run(function(config, Private) {
                                 path = [path, fieldEntry.filterField].join('.');
                             }
 
-                            filters = addFunc.apply(this, [path, entry_values, operation, index]);
+                            filters = addFunc.apply(this, [path, entryValues, operation, index]);
                         }
                     }, filterManager));
                 });
