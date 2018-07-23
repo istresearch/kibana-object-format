@@ -1,6 +1,6 @@
 {
   "name": "kibana_object_format",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Enables objects in arrays to be configured with a field formatter.",
   "license": "Apache 2.0",
   "homepage": "https://github.com/istresearch/kibana-object-format",
@@ -19,10 +19,16 @@
   "devDependencies": {
     "@elastic/eslint-config-kibana": "0.15.0",
     "@elastic/plugin-helpers": "^6.0.0",
+    "eslint": "4.14.0",
+    "eslint-plugin-babel": "4.1.2",
+    "eslint-plugin-import": "2.8.0",
+    "eslint-plugin-jest": "^21.6.2",
+    "eslint-plugin-mocha": "4.11.0",
+    "eslint-plugin-no-unsanitized": "^2.0.2",
+    "eslint-plugin-prefer-object-spread": "1.2.1",
+    "eslint-plugin-react": "7.5.1",
     "babel-eslint": "8.1.2",
     "lodash": "3.10.1",
-    "chai": "3.5.0",
-    "eslint": "4.14.0",
-    "eslint-plugin-mocha": "4.11.0"
+    "chai": "3.5.0"
   }
 }
