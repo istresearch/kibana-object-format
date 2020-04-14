@@ -12,7 +12,7 @@ app.run([
   '$rootScope',
   '$timeout',
   function(config, $rootScope, $timeout) {
-    let settings = config.get('fieldMapper:fields', DEFAULT_CONFIG);
+    let settings = config.get('fieldMapperHack:fields', DEFAULT_CONFIG);
     settings = settings.index_pattern;
 
     $rootScope.$on('$routeChangeSuccess', function(_$event, next) {
