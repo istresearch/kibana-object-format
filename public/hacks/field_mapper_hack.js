@@ -1,98 +1,93 @@
 import _ from 'lodash';
-import 'ui/courier';
-import 'ui/index_patterns';
-import 'ui/modals/confirm_modal_promise';
 import { uiModules } from 'ui/modules';
 
-const app = uiModules.get('app/kibana-object-formatter', [
-  'kibana/index_patterns'
-]);
+const DEFAULT_CONFIG =
+  '{\n  "index_pattern": {\n    "*": {\n' +
+  '"include": [],\n      "exclude": [".*"]\n    }\n  }\n}';
 
-/**
- * Patch 'fieldsFetcher.fetch' to allow us to insert additional fields.
- */
-app.run(['indexPatterns', 'config', function (indexPatterns, config) {
+const app = uiModules.get('apps/management');
 
-    const fieldsFetcher = indexPatterns.fieldsFetcher;
-    const fieldsFunc = fieldsFetcher.fetch;
+app.run([
+  'config',
+  '$rootScope',
+  '$timeout',
+  function(config, $rootScope, $timeout) {
+    let settings = config.get('fieldMapper:fields', DEFAULT_CONFIG);
+    settings = settings.index_pattern;
 
-    (function (fieldsFunc) { // Cache the original method
-        fieldsFetcher.fetch = function () { // Wrap the method
+    $rootScope.$on('$routeChangeSuccess', function(_$event, next) {
+      const indexPattern = next && next.locals && next.locals.indexPattern;
+      if (indexPattern && indexPattern.fieldsFetcher && indexPattern.fieldsFetcher.fetch) {
+        indexPattern.fieldsFetcher.fetch = indexPattern => {
+          let paths = [];
+          const mappingNames = [];
 
-            const indexPattern = arguments[0];
+          const { fields } = indexPattern;
 
-            const promise = fieldsFunc.apply(this, arguments);
+          // 1) Iterate the field names, identify the "parent" paths
+          _.forEach(fields, field => {
+            const fieldName = field.name;
+            mappingNames.push(fieldName);
 
-            return promise.then(fields => {
+            const parts = fieldName.split('.');
 
-                let paths = [];
-                const mappingNames = [];
+            while (parts.length > 1) {
+              parts.pop();
+              paths.push(parts.join('.'));
+            }
+          });
 
-                // 1) Iterate the field names, identify the "parent" paths
-                _.forEach(fields, function (field) {
+          paths = _.uniq(_.difference(paths, mappingNames));
 
-                    const fieldName = field.name;
-                    mappingNames.push(fieldName);
+          // 2) Test the discovered field names against the configuration
+          let match = { includes: [], excludes: [] };
 
-                    const parts = fieldName.split('.');
+          if (_.has(settings, indexPattern.id)) {
+            match = settings[indexPattern.id];
+          } else if (_.has(settings, '*')) {
+            match = settings['*'];
+          }
 
-                    while (parts.length > 1) {
-                        parts.pop();
-                        paths.push(parts.join('.'));
-                    }
-                });
+          const included = [];
+          const excluded = [];
 
-                paths = _.uniq(_.difference(paths, mappingNames));
-
-                // 2) Test the discovered field names against the configuration
-                const defaultConfig = '{\n  \"index_pattern\": {\n    \"*\": {\n' +
-                      '\"include\": [],\n      \"exclude\": [\".*\"]\n    }\n  }\n}';
-                let settings = config.get('fieldMapperHack:fields', defaultConfig);
-                settings = settings.index_pattern;
-
-                let match = { includes: [], excludes: [] };
-
-                if (_.has(settings, indexPattern.id)) {
-                    match = settings[indexPattern.id];
-                }
-                else if (_.has(settings, '*')) {
-                    match = settings['*'];
-                }
-
-                const included = [];
-                const excluded = [];
-
-                _.forEach(match.include, function (expression) {
-                    _.forEach(paths, function (path) {
-                        if (path.match(expression)) {
-                            included.push(path);
-                        }
-                    });
-                });
-
-                _.forEach(match.exclude, function (expression) {
-                    _.forEach(included, function (path) {
-                        if (path.match(expression)) {
-                            excluded.push(path);
-                        }
-                    });
-                });
-
-                // 3) Add a field mapping for the missing parents
-                _.forEach(_.difference(included, excluded), function (path) {
-                    fields.push({
-                        name: path,
-                        aggregatable: false,
-                        searchable: true,
-                        analyzed: false,
-                        doc_values: false,
-                        indexed: true,
-                        type: 'string'
-                    });
-                });
-
-                return fields;
+          _.forEach(match.include, expression => {
+            _.forEach(paths, path => {
+              if (path.match(expression)) {
+                included.push(path);
+              }
             });
+          });
+
+          _.forEach(match.exclude, expression => {
+            _.forEach(included, path => {
+              if (path.match(expression)) {
+                excluded.push(path);
+              }
+            });
+          });
+
+          // 3) Add a field mapping for the missing parents
+          _.forEach(_.difference(included, excluded), path => {
+            fields.push({
+              name: path,
+              aggregatable: false,
+              searchable: true,
+              analyzed: false,
+              doc_values: false,
+              indexed: true,
+              type: 'string',
+            });
+          });
+
+          // Triggers a refresh of the table after the update is made.
+          $timeout(() => {
+            $rootScope.$apply();
+          }, 0);
+
+          return fields;
         };
-    })(fieldsFunc);
-}]);
+      }
+    });
+  },
+]);
