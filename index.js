@@ -4,6 +4,7 @@ export default function(kibana) {
       name: 'kibana_object_format',
       uiExports: {
         hacks: ['plugins/kibana_object_format/hacks/field_mapper_hack'],
+        fieldFormats: ['plugins/kibana_object_format/field_formats/object/register'],
         uiSettingDefaults: {
           'fieldMapperHack:fields': {
               value: '{\n  "index_pattern": {\n    "*": {\n      "include": [],\n      "exclude": [".*"]\n    }\n  }\n}',
