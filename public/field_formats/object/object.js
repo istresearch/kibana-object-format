@@ -233,25 +233,3 @@ export class ObjectFormat extends FieldFormat {
     return this.asPrettyString(rawValue);
   };
 }
-
-/*
-{
-  "attribs": {
-    "website": "github.com/istresearch",
-    "source": "Explicit",
-    "version": "1.0",
-    "type": "Emoji"
-  },
-  "results": [
-    {
-      "description": "thumbs up",
-      "value": "👍"
-    },
-    {
-      "description": "backhand index pointing right",
-      "value": "👉"
-    }
-  ]
-}
-
-*/
