@@ -1,5 +1,7 @@
 import _ from 'lodash';
 import { uiModules } from 'ui/modules';
+import { npStart } from 'ui/new_platform';
+const { indexPatterns } = npStart.plugins.data;
 
 const app = uiModules.get('apps/management');
 
@@ -10,16 +12,25 @@ app.run([
   function(config, $rootScope, $timeout) {
     $rootScope.$on('$routeChangeSuccess', function(_$event, next) {
       const fieldsFetcher = _.get(next, 'locals.indexPattern.fieldsFetcher', null);
-      const { fetch: fieldsFunc } = fieldsFetcher;
-
+      
       if (fieldsFetcher) {
+        const { fetch: fieldsFunc } = fieldsFetcher;
         (function(fieldsFunc) {
           fieldsFetcher.fetch = () => {
-            const indexPattern = arguments[0];
+
+            let indexPattern = {};
+
+            indexPatterns.getFields(['id', 'title']).then(ipList => {
+              const ipTitle = $('.euiTitle').text().trim();
+              const ip = ipList.filter(ipItem => ipItem.title === ipTitle);
+              if (ip.length === 1) {
+                indexPattern = ip[0];
+              }
+            })
+
             const promise = fieldsFunc.apply(this, arguments);
 
-            return promise.then(fields => {
-
+            return promise.then(fields => {  
               let paths = [];
               const mappingNames = [];
 
@@ -91,10 +102,7 @@ app.run([
               return fields;
             });
           };
-
         })(fieldsFunc);
-
-        
       }
     });
   },
