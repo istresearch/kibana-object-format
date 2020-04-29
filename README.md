@@ -290,3 +290,7 @@ See the [kibana contributing guide](https://github.com/elastic/kibana/blob/maste
 
 For more information about any of these commands run `yarn ${task} --help`. For a full list of tasks checkout the `package.json` file, or run `yarn run`.
 
+plugins/kibana-object-format/public/hacks/object_filter_hack.js
+REMOVE plugins/kibana-object-format/public/common/clean-template
+plugins/kibana-object-format/public/field_formats/object/cleanFieldTemplate.js
+plugins/kibana-object-format/package.json

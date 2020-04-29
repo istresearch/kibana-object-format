@@ -44,7 +44,7 @@
     Observer.prototype.observe = function() {
       var self = this
       this.target.forEach(function(target) {
-        self.observer.observe(target, { childList: true, subtree: true })
+        self.observer.observe(target, { attributes: true,  childList: true, subtree: true })
       })
     }
     

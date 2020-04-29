@@ -14,7 +14,7 @@ import './object.less';
 
 lodashOopMixin(_);
 lodashGetPluckMixin(_);
-cleanTemplate();
+cleanTemplate(false);
 
 const vis_template = _.template(format_html);
 const image_template = _.template(image_html);
