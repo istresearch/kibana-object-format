@@ -45,17 +45,13 @@ const cleanTemplate = (showPopover) => {
   $("#kibana-app").observe(
     ".kbnDocTableCell__dataField",
     _.throttle(() => {
-      setTimeout(() => {
-        console.log("kbnDocTableCell__dataField");
-        clean(showPopover);
-      }, 0); // Increment to 1000 if doens't work.
+      clean(showPopover);
     }, 1000)
   );
 
   $("#kibana-app").observe(
     ".kbnDocViewerTable tr",
     _.throttle(() => {
-      console.log("kbnDocTableDetails__row");
       clean(showPopover);
     }, 1000)
   );
