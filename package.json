@@ -19,6 +19,9 @@
     "test:browser": "plugin-helpers test:browser",
     "build": "plugin-helpers build"
   },
+  "dependencies": {
+    "tippy.js": "~6.2.2"
+  },
   "devDependencies": {
     "@elastic/eslint-config-kibana": "link:../../packages/eslint-config-kibana",
     "@elastic/eslint-import-resolver-kibana": "link:../../packages/kbn-eslint-import-resolver-kibana",

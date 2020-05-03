@@ -7,7 +7,7 @@ const app = uiModules.get('apps/management');
 
 app.run([
   'config',
-  '$rootScope',
+  '$rootScope', 
   '$timeout',
   function(config, $rootScope, $timeout) {
     $rootScope.$on('$routeChangeSuccess', function(_$event, next) {

@@ -1,3 +1,5 @@
+// https://github.com/rkusa/jquery-observe - A simple mutation observer for jQuery.
+// aaxelrod - added disconnect functionality to jquery $.fn 
 !function($) {
     var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver
     var Observer = function(target, selector, onAdded, onRemoved) {
@@ -63,5 +65,16 @@
       contracts.push(observer)
       this.data('contracts', contracts)
       return this
+    }
+
+    // aaxelrod - Added custom disconnect. 
+    $.fn.disconnect = function() {
+      var contracts = this.data('contracts');
+      if (contracts && contracts.length) {
+        contracts.forEach(function(contract) {
+          contract.observer.disconnect();
+        });
+      }
+      return this;
     }
   }(window.Zepto || window.jQuery)
