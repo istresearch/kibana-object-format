@@ -37,7 +37,8 @@ filterManager.register = customFilter => {
     const matchPhrase = _.get(newFilter, 'query.match_phrase', {});
     const newFilterKeys = Object.keys(matchPhrase);
     const fieldName = newFilterKeys.length === 1 ? newFilterKeys[0] : null;
-    const formatType = fieldName && fieldFormatMap[fieldName] ? fieldFormatMap[fieldName].type.id : null;
+    const formatType =
+      fieldName && fieldFormatMap[fieldName] ? fieldFormatMap[fieldName].type.id : null;
     const params = fieldName && fieldFormatMap[fieldName] ? fieldFormatMap[fieldName]._params : {};
     const values = fieldName && matchPhrase[fieldName] ? matchPhrase[fieldName] : {};
     const addFunc = (filterName, entryValue, alias = null) =>
@@ -56,6 +57,22 @@ filterManager.register = customFilter => {
           },
         },
       ]);
+    const removeFunc = (filterName, entryValue) => {
+      const currentFilters = filterManager.getFilters();
+
+      if (currentFilters.length > 0) {
+        const filterIndex = currentFilters.findIndex(
+          filter => filter.meta.key === filterName && filter.meta.params.query === entryValue
+        );
+        if (filterIndex >= 0) {
+          filterManager.removeFilter(currentFilters[filterIndex]);
+        }
+      }
+    };
+    const getCurrentFilters = () =>
+      filterManager
+        .getFilters()
+        .map(filter => ({ key: filter.meta.key, value: filter.meta.params.query }));
 
     const filterParams = {
       fieldName,
@@ -63,6 +80,8 @@ filterManager.register = customFilter => {
       params,
       values,
       addFunc,
+      removeFunc,
+      getCurrentFilters,
     };
 
     let customFilterFlag = false;

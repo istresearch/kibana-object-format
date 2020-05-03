@@ -30,9 +30,7 @@ app.run([
   },
 ]);
 
-const objectFilter = paramsFilter => {
-  const { fieldName, formatType, params, values, addFunc } = paramsFilter;
-
+const objectFilter = ({ fieldName, formatType, params, values, addFunc, removeFunc, getCurrentFilters }) => {
   if (formatType !== 'ist-object') {
     return false;
   }
@@ -82,9 +80,14 @@ const objectFilter = paramsFilter => {
   }
 
   if (entryValues.length > 1) {
-    popover.setForm(entryValues, (selectedentryValues) => {
+    const currentFilters = getCurrentFilters();
+    popover.setForm(entryValues, currentFilters, (selectedentryValues) => {
       for (let sVal of selectedentryValues) {
-        addFunc(sVal.path, sVal.value);
+        if (sVal.checked) {
+          addFunc(sVal.path, sVal.value);
+        } else {
+          removeFunc(sVal.path, sVal.value);
+        }
       }
     });
   } else {

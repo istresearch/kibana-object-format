@@ -38,12 +38,11 @@ class Popover {
     e.stopPropagation();
 
     const formFields = $('.object-filter-form').serializeArray();
-    const selectedEntryValues = [];
 
-    for (let formField of formFields) {
-      const entryValue = this._entryValues.find(entryValue => entryValue.value === formField.value);
-      selectedEntryValues.push({...entryValue})
-    }
+    const selectedEntryValues =  this._entryValues.map(entryValue => ({
+      ...entryValue,
+      checked: formFields.findIndex(field => field.value === entryValue.value) !== -1,
+    }))
 
     this._selected.hide();
     this._callback(selectedEntryValues);
@@ -55,7 +54,7 @@ class Popover {
       _.throttle(() => {
         const elements = document.querySelectorAll(childSelector);
         this.add(elements);
-      }, 2000)
+      }, 100)
     );
     this._observers.push(observer);
   }
@@ -75,11 +74,13 @@ class Popover {
 
   formBuilder() {
     const formFields = this._entryValues.map(({ type, path, value, label }) => {
+    let filterExist = this._currentFilters.findIndex(filter => filter.key === path && filter.value === value) !== -1;
+
       switch (type) {
         case 'text':
           const lbl = label ? `<strong>${label}: </strong>` : '';
           return `
-              <input checked type="checkbox" id="${path}" name="${path}" value="${value}">
+              <input ${filterExist && 'checked'} type="checkbox" id="${path}" name="${path}" value="${value}">
               <label for="${path}">${lbl}${value}</label>
             `;
         default:
@@ -95,8 +96,9 @@ class Popover {
       </form>`;
   }
 
-  setForm(entryValues, callback) {
+  setForm(entryValues, currentFilters, callback) {
     this._entryValues = entryValues;
+    this._currentFilters = currentFilters;
     this._callback = callback;
     const formhtml = this.formBuilder();
     this.setContent(formhtml);
@@ -105,6 +107,7 @@ class Popover {
   setContent(content) {
     setTimeout(() => {
       if (this._selected) {
+        this._selected.setContent('');
         this._selected.setContent(content);
       }
     }, 0);
@@ -127,12 +130,13 @@ class Popover {
       popover.unmount();
       popover.destroy();
     }
-    this._popovers.length = 0;
     for (let oberver of this._observers) {
       oberver.disconnect();
     }
+    this._popovers.length = 0;
     this._observers.length = 0;
     this._entryValues.length = 0;
+    this._currentFilters.length = 0;
     $('body').off('submit', '.object-filter-form', this.processForm.bind(this));
   }
 }
