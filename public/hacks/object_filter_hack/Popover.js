@@ -53,7 +53,11 @@ class Popover {
       parentSelector,
       _.throttle(() => {
         const elements = document.querySelectorAll(childSelector);
-        this.add(elements);
+        if (elements.length > 0) {
+          for (let element of elements) {
+            this.add(element);
+          }
+        }
       }, 100)
     );
     this._observers.push(observer);
@@ -126,7 +130,9 @@ class Popover {
   destroy() {
     this._callback = null;
     this._selected = null;
+    console.log(this._popovers)
     for (let popover of this._popovers) {
+      console.log(popover)
       popover.unmount();
       popover.destroy();
     }
