@@ -28,6 +28,7 @@ class Popover {
     this._observers = [];
     this._callback = () => {};
     this._entryValues = [];
+    this._currentFilters = [];
 
     tippy.setDefaultProps(this._defaultProps);
     $('body').on('submit', '.object-filter-form', this.processForm.bind(this));
@@ -84,8 +85,11 @@ class Popover {
         case 'text':
           const lbl = label ? `<strong>${label}: </strong>` : '';
           return `
-              <input ${filterExist && 'checked'} type="checkbox" id="${path}" name="${path}" value="${value}">
-              <label for="${path}">${lbl}${value}</label>
+            <label class="po-checkbox">
+              <span>${lbl}${value}</span>
+              <input type="checkbox" ${filterExist && 'checked'} id="${path}" name="${path}" value="${value}">
+              <span class="checkmark"></span>
+            </label>
             `;
         default:
           return null;
@@ -94,12 +98,19 @@ class Popover {
 
     return `
       <form class="object-filter-form">
-        ${formFields.join('<br/>')}
-        <br/>
-        <input type="submit" value="Set Filters">
+        <div class="object-filter-form-body"> 
+          ${formFields.join('')}
+        </div>
+        <div class="object-filter-form-footer"> 
+          <button class="euiButton euiButton--primary euiButton--fill euiButton--small" type="submit">
+            <span class="euiButton__content">
+              <span class="euiButton__text">Set Filters</span>
+            </span>
+          </button>
+        </div>
       </form>`;
   }
-
+ 
   setForm(entryValues, currentFilters, callback) {
     this._entryValues = entryValues;
     this._currentFilters = currentFilters;

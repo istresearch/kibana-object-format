@@ -2,6 +2,7 @@
 import _ from 'lodash';
 import { uiModules } from 'ui/modules';
 import Popover from './Popover';
+import './popover.less';
 
 const app = uiModules.get('kibana');
 const popover = new Popover();
@@ -58,7 +59,6 @@ const objectFilter = ({ fieldName, formatType, params, values, addFunc, removeFu
 
       const plucked = _.getPluck(val, path);
       if (_.isArray(plucked)) {
-        // Add Array thing
         for (let i = 0, len = fieldEntry.limit || plucked.length; i < len; i++) {
           let v = plucked[i];
           entryValues.push({
