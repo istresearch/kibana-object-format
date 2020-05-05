@@ -41,6 +41,7 @@ filterManager.register = customFilter => {
       fieldName && fieldFormatMap[fieldName] ? fieldFormatMap[fieldName].type.id : null;
     const params = fieldName && fieldFormatMap[fieldName] ? fieldFormatMap[fieldName]._params : {};
     const values = fieldName && matchPhrase[fieldName] ? matchPhrase[fieldName] : {};
+    const meta = { negate: newFilter.meta.negate };
     const addFunc = (filterName, entryValue, alias = null) =>
       addFiltersOriginal.apply(filterManager, [
         {
@@ -57,12 +58,15 @@ filterManager.register = customFilter => {
           },
         },
       ]);
-    const removeFunc = (filterName, entryValue) => {
+    const removeFunc = (filterName, entryValue, negate) => {
       const currentFilters = filterManager.getFilters();
 
       if (currentFilters.length > 0) {
         const filterIndex = currentFilters.findIndex(
-          filter => filter.meta.key === filterName && filter.meta.params.query === entryValue
+          filter =>
+            filter.meta.key === filterName &&
+            filter.meta.params.query === entryValue &&
+            filter.meta.key === negate
         );
         if (filterIndex >= 0) {
           filterManager.removeFilter(currentFilters[filterIndex]);
@@ -70,20 +74,22 @@ filterManager.register = customFilter => {
       }
     };
     const getCurrentFilters = () =>
-      filterManager
-        .getFilters()
-        .map(filter => ({ key: filter.meta.key, value: filter.meta.params.query }));
-
+      filterManager.getFilters().map(filter => ({
+        key: filter.meta.key,
+        value: filter.meta.params.query,
+        negate: filter.meta.negate,
+        disable: filter.meta.disable,
+      }));
     const filterParams = {
       fieldName,
       formatType,
       params,
       values,
+      meta,
       addFunc,
       removeFunc,
       getCurrentFilters,
     };
-
     let customFilterFlag = false;
 
     for (let customFilter of filterManager.customFilters) {

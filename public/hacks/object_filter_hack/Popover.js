@@ -40,10 +40,10 @@ class Popover {
 
     const formFields = $('.object-filter-form').serializeArray();
 
-    const selectedEntryValues =  this._entryValues.map(entryValue => ({
+    const selectedEntryValues = this._entryValues.map(entryValue => ({
       ...entryValue,
       checked: formFields.findIndex(field => field.value === entryValue.value) !== -1,
-    }))
+    }));
 
     this._selected.hide();
     this._callback(selectedEntryValues);
@@ -53,7 +53,6 @@ class Popover {
     const observer = $(target).observe(
       parentSelector,
       _.throttle(() => {
-        console.log('observe')
         const elements = document.querySelectorAll(childSelector);
         if (elements.length > 0) {
           for (let element of elements) {
@@ -75,7 +74,7 @@ class Popover {
           $(event.target).addClass('keep-icon-visible');
         },
         onHide(_instance) {
-          console.log('hide')
+          console.log('hide');
           self._selected = null;
           $('.keep-icon-visible').removeClass('keep-icon-visible');
         },
@@ -85,16 +84,19 @@ class Popover {
   }
 
   formBuilder() {
-    const formFields = this._entryValues.map(({ type, path, value, label }) => {
-    let filterExist = this._currentFilters.findIndex(filter => filter.key === path && filter.value === value) !== -1;
-
+    const formFields = this._entryValues.map(({ type, path, value, label, negate }) => {
+      let filterExist =
+        this._currentFilters.findIndex(
+          filter => filter.key === path && filter.value === value && filter.negate === negate
+        ) !== -1;
       switch (type) {
         case 'text':
           const lbl = label ? `<strong>${label}: </strong>` : '';
           return `
             <label class="po-checkbox">
               <span>${lbl}${value}</span>
-              <input type="checkbox" ${filterExist && 'checked'} id="${path}" name="${path}" value="${value}">
+              <input type="checkbox" ${filterExist &&
+                'checked'} id="${path}" name="${path}" value="${value}">
               <span class="checkmark"></span>
             </label>
             `;
@@ -117,7 +119,7 @@ class Popover {
         </div>
       </form>`;
   }
- 
+
   setForm(entryValues, currentFilters, callback) {
     this._entryValues = entryValues;
     this._currentFilters = currentFilters;

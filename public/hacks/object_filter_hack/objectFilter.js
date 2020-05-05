@@ -31,7 +31,16 @@ app.run([
   },
 ]);
 
-const objectFilter = ({ fieldName, formatType, params, values, addFunc, removeFunc, getCurrentFilters }) => {
+const objectFilter = ({
+  fieldName,
+  formatType,
+  params,
+  values,
+  meta,
+  addFunc,
+  removeFunc,
+  getCurrentFilters,
+}) => {
   if (formatType !== 'ist-object') {
     return false;
   }
@@ -63,6 +72,7 @@ const objectFilter = ({ fieldName, formatType, params, values, addFunc, removeFu
           let v = plucked[i];
           entryValues.push({
             ...fieldEntry,
+            negate: meta.negate,
             path: fullPath,
             value: v,
           });
@@ -71,6 +81,7 @@ const objectFilter = ({ fieldName, formatType, params, values, addFunc, removeFu
         if (plucked) {
           entryValues.push({
             ...fieldEntry,
+            negate: meta.negate,
             path: fullPath,
             value: plucked,
           });
@@ -81,18 +92,19 @@ const objectFilter = ({ fieldName, formatType, params, values, addFunc, removeFu
 
   if (entryValues.length > 1) {
     const currentFilters = getCurrentFilters();
-    popover.setForm(entryValues, currentFilters, (selectedentryValues) => {
+
+    popover.setForm(entryValues, currentFilters, selectedentryValues => {
       for (let sVal of selectedentryValues) {
         if (sVal.checked) {
           addFunc(sVal.path, sVal.value);
         } else {
-          removeFunc(sVal.path, sVal.value);
+          removeFunc(sVal.path, sVal.value, sVal.negate);
         }
       }
     });
   } else {
-
-  } 
+    
+  }
 
   return true;
 };
