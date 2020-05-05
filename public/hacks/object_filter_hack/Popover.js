@@ -32,6 +32,7 @@ class Popover {
 
     tippy.setDefaultProps(this._defaultProps);
     $('body').on('submit', '.object-filter-form', this.processForm.bind(this));
+    $('body').on('click', '.select-filters', this.allSelected.bind(this));
   }
 
   processForm(e) {
@@ -39,7 +40,6 @@ class Popover {
     e.stopPropagation();
 
     const formFields = $('.object-filter-form').serializeArray();
-
     const selectedEntryValues = this._entryValues.map(entryValue => ({
       ...entryValue,
       checked: formFields.findIndex(field => field.value === entryValue.value) !== -1,
@@ -47,6 +47,18 @@ class Popover {
 
     this._selected.hide();
     this._callback(selectedEntryValues);
+  }
+
+  allSelected(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const isSelectAll = $(e.target).hasClass('select-all');
+    const formFields = $('.object-filter-form .po-checkbox input');
+
+    for (let field of formFields) {
+      $(field).prop('checked', isSelectAll);
+    }
   }
 
   observe(target, parentSelector, childSelector) {
@@ -74,7 +86,6 @@ class Popover {
           $(event.target).addClass('keep-icon-visible');
         },
         onHide(_instance) {
-          console.log('hide');
           self._selected = null;
           $('.keep-icon-visible').removeClass('keep-icon-visible');
         },
@@ -107,6 +118,13 @@ class Popover {
 
     return `
       <form class="object-filter-form">
+        <div class="object-filter-form-header"> 
+          <div></div>
+          <div>
+            <a href="#" class="select-filters select-all">Select All</a> | 
+            <a href="#" class="select-filters deselect-all">Deselect All</a>
+          </div>
+        </div>
         <div class="object-filter-form-body"> 
           ${formFields.join('')}
         </div>
@@ -162,6 +180,7 @@ class Popover {
     this._entryValues.length = 0;
     this._currentFilters.length = 0;
     $('body').off('submit', '.object-filter-form', this.processForm.bind(this));
+    $('body').off('click', '.select-filters', this.allSelected.bind(this));
   }
 }
 
