@@ -9,6 +9,15 @@
     text-align: right;
 }
 
+.keep-icon-visible {
+    &:focus {
+        animation: none !important;
+    }
+
+    opacity: 1 !important;
+    color: #006BB4;
+}
+
 .po-checkbox {
     display: block;
     position: relative;
@@ -29,6 +38,16 @@
         cursor: pointer;
         height: 0;
         width: 0;
+
+        &:checked~.checkmark {
+            background-color: #006BB4;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='8' viewBox='0 0 10 8'%3E%3Cpath d='M.375 2.625L3.375 5.625M3.375 5.625L8.625.375' fill='none' fill-rule='evenodd' stroke='rgb%28255, 255, 255%29' stroke-linecap='round' stroke-width='1.5' transform='translate(.5 1)'/%3E%3C/svg%3E");
+        }
+
+        &:focus~.checkmark {
+            border-color: #006BB4;
+            animation: 350ms cubic-bezier(0.694, 0.0482, 0.335, 1) 1 normal forwards focusRingAnimate !important;
+        }
     }
 
     .checkmark {
@@ -45,16 +64,4 @@
         border-radius: 4px;
         transition: background-color 150ms ease-in, border-color 150ms ease-in;
     }
-}
-
-
-/* When the checkbox is checked, add a blue background */
-.po-checkbox input:checked~.checkmark {
-    background-color: #006BB4;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='8' viewBox='0 0 10 8'%3E%3Cpath d='M.375 2.625L3.375 5.625M3.375 5.625L8.625.375' fill='none' fill-rule='evenodd' stroke='rgb%28255, 255, 255%29' stroke-linecap='round' stroke-width='1.5' transform='translate(.5 1)'/%3E%3C/svg%3E");
-}
-
-.po-checkbox input:focus~.checkmark {
-    border-color: #006BB4;
-    animation: 350ms cubic-bezier(0.694, 0.0482, 0.335, 1) 1 normal forwards focusRingAnimate !important;
 }

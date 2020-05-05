@@ -53,6 +53,7 @@ class Popover {
     const observer = $(target).observe(
       parentSelector,
       _.throttle(() => {
+        console.log('observe')
         const elements = document.querySelectorAll(childSelector);
         if (elements.length > 0) {
           for (let element of elements) {
@@ -69,8 +70,14 @@ class Popover {
     if (!element.isPopoverAdded) {
       element.isPopoverAdded = true;
       const popover = tippy(element, {
-        onTrigger(instance, _event) {
+        onTrigger(instance, event) {
           self._selected = instance;
+          $(event.target).addClass('keep-icon-visible');
+        },
+        onHide(_instance) {
+          console.log('hide')
+          self._selected = null;
+          $('.keep-icon-visible').removeClass('keep-icon-visible');
         },
       });
       this._popovers.push(popover);
@@ -141,9 +148,7 @@ class Popover {
   destroy() {
     this._callback = null;
     this._selected = null;
-    console.log(this._popovers)
     for (let popover of this._popovers) {
-      console.log(popover)
       popover.unmount();
       popover.destroy();
     }
