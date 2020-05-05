@@ -103,7 +103,7 @@ const objectFilter = ({
       }
     });
   } else {
-    
+
   }
 
   return true;

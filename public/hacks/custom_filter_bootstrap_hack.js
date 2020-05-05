@@ -66,8 +66,9 @@ filterManager.register = customFilter => {
           filter =>
             filter.meta.key === filterName &&
             filter.meta.params.query === entryValue &&
-            filter.meta.key === negate
+            filter.meta.negate === negate
         );
+
         if (filterIndex >= 0) {
           filterManager.removeFilter(currentFilters[filterIndex]);
         }
