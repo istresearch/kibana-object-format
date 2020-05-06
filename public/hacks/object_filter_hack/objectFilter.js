@@ -59,7 +59,6 @@ const objectFilter = ({
 
     for (let fieldEntry of params.fields) {
       let { path } = fieldEntry;
-
       let fullPath = basePath ? [fieldName, basePath, path].join('.') : [fieldName, path].join('.');
 
       if (fieldEntry.filterField) {
@@ -90,6 +89,8 @@ const objectFilter = ({
     }
   }
 
+  console.log(entryValues);
+  
   if (entryValues.length > 1) {
     const currentFilters = getCurrentFilters();
 

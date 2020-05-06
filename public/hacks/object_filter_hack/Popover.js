@@ -111,10 +111,25 @@ class Popover {
               <span class="checkmark"></span>
             </label>
             `;
+          case 'image':
+            return `
+              <label class="po-checkbox">
+                <input type="checkbox" ${filterExist &&
+                  'checked'} id="${path}" name="${path}" value="${value}">
+                <div class="image-container" 
+                  style="background-image: url('${value}');
+                  background-size: cover;
+                  background-position: center;
+                  height: 60px; width: 60px;">
+                </div>
+              </label>
+            `;
         default:
           return null;
       }
     });
+
+ 
 
     return `
       <form class="object-filter-form">
