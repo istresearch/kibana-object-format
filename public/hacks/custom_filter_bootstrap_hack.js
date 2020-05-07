@@ -76,10 +76,10 @@ filterManager.register = customFilter => {
     };
     const getCurrentFilters = () =>
       filterManager.getFilters().map(filter => ({
-        key: filter.meta.key,
-        value: filter.meta.params.query,
-        negate: filter.meta.negate,
-        disable: filter.meta.disable,
+        key: _.get(filter, 'meta.key', null),
+        value: _.get(filter, 'meta.params.query', null),
+        negate: _.get(filter, 'meta.negate', null),
+        disable: _.get(filter, 'meta.disable', null),
       }));
     const filterParams = {
       fieldName,
