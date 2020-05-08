@@ -1,37 +1,11 @@
 /* Placeholder for Filter Hack */
 import _ from 'lodash';
-import { uiModules } from 'ui/modules';
 import Popover from './Popover';
 import './popover.less';
 
-const app = uiModules.get('kibana');
-const popover = new Popover();
+export const popover = new Popover();
 
-app.run([
-  '$rootScope',
-  $rootScope => {
-    $rootScope.$on('$routeChangeSuccess', (_$event, next) => {
-      const {
-        $$route: { originalPath },
-      } = next;
-
-      if (popover.isInit()) {
-        popover.destroy();
-      }
-
-      if (originalPath.indexOf('/discover/') !== -1) {
-        popover.observe(
-          'body',
-          '.kbnDocTableRowFilterButton',
-          '.kbnDocTableRowFilterButton.tippy-filter-button'
-        );
-        popover.observe('body', '.euiToolTipAnchor', '.euiToolTipAnchor.tippy-filter-button');
-      }
-    });
-  },
-]);
-
-const objectFilter = ({
+export default ({
   fieldName,
   formatType,
   params,
@@ -66,6 +40,7 @@ const objectFilter = ({
       }
 
       const plucked = _.getPluck(val, path);
+
       if (_.isArray(plucked)) {
         for (let i = 0, len = fieldEntry.limit || plucked.length; i < len; i++) {
           let v = plucked[i];
@@ -89,8 +64,6 @@ const objectFilter = ({
     }
   }
 
-  console.log(entryValues);
-  
   if (entryValues.length > 1) {
     const currentFilters = getCurrentFilters();
 
@@ -103,11 +76,11 @@ const objectFilter = ({
         }
       }
     });
-  } else {
-
+  } else if (entryValues.length === 1) {
+    popover.hide();
+    const entryValue = entryValues[0];
+    addFunc(entryValue.path, entryValue.value);
   }
 
   return true;
 };
-
-export default objectFilter;

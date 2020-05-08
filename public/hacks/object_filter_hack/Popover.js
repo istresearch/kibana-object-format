@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import tippy, { hideAll } from 'tippy.js';
+import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/light.css';
 import '../../common/jquery-plugins/observer';
@@ -23,19 +23,59 @@ class Popover {
       ...DEFAULT_PROPS,
       ...defaultProps,
     };
-    this._popovers = [];
-    this._selected = null;
-    this._observers = [];
-    this._callback = () => {};
+    this._init = false;
+    this._instance = null;
+    this._callback = null;
     this._entryValues = [];
-    this._currentFilters = [];
 
     tippy.setDefaultProps(this._defaultProps);
-    $('body').on('submit', '.object-filter-form', this.processForm.bind(this));
-    $('body').on('click', '.select-filters', this.allSelected.bind(this));
   }
 
-  processForm(e) {
+  init() {
+    this._init = true;
+    this._instance = null;
+    this._callback = null;
+    this._entryValues = [];
+    $('body').on(
+      'submit.objectFilterForm',
+      '.object-filter-form',
+      this.handlerProcessForm.bind(this)
+    );
+    $('body').on('click.selectFilters', '.select-filters', this.handlerSelectAll.bind(this));
+    $('body').on('click.filterPopver', '.tippy-filter-button', this.handlerShowPopover.bind(this));
+  }
+
+  destroy() {
+    this._init = false;
+    this._instance = null;
+    this._callback = null;
+    this._entryValues.length = 0;
+    $('body').off('submit.objectFilterForm');
+    $('body').off('click.selectFilters');
+    $('body').off('click.filterPopver');
+  }
+
+  isInit() {
+    return this._init;
+  }
+
+  handlerShowPopover(e) {
+    this._instance = tippy(e.target, {
+      onHide(instance) {
+        setTimeout(() => {
+          instance.unmount();
+          instance.destroy();
+          this._instance = null;
+        }, 100);
+
+        $('.keep-icon-visible').removeClass('keep-icon-visible');
+      },
+    });
+    $(e.target).addClass('keep-icon-visible');
+    this._instance.show();
+  }
+
+  handlerProcessForm(e) {
     e.preventDefault();
     e.stopPropagation();
 
@@ -45,82 +85,46 @@ class Popover {
       checked: formFields.findIndex(field => field.value === entryValue.value) !== -1,
     }));
 
-    this._selected.hide();
+    this._instance.hide();
     this._callback(selectedEntryValues);
   }
 
-  allSelected(e) {
+  handlerSelectAll(e) {
     e.preventDefault();
     e.stopPropagation();
 
     const isSelectAll = $(e.target).hasClass('select-all');
-    const formFields = $('.object-filter-form .po-checkbox input');
+    const formFields = $('.object-filter-form .po-select input');
 
     for (let field of formFields) {
       $(field).prop('checked', isSelectAll);
     }
   }
 
-  observe(target, parentSelector, childSelector) {
-    const observer = $(target).observe(
-      parentSelector,
-      _.throttle(() => {
-        const elements = document.querySelectorAll(childSelector);
-        if (elements.length > 0) {
-          for (let element of elements) {
-            this.add(element);
-          }
-        }
-      }, 100)
-    );
-    this._observers.push(observer);
-  }
-
-  add(element) {
-    const self = this;
-    if (!element.isPopoverAdded) {
-      element.isPopoverAdded = true;
-      const popover = tippy(element, {
-        onTrigger(instance, event) {
-          self._selected = instance;
-          $(event.target).addClass('keep-icon-visible');
-        },
-        onHide(_instance) {
-          self._selected = null;
-          $('.keep-icon-visible').removeClass('keep-icon-visible');
-        },
-      });
-      this._popovers.push(popover);
-    }
-  }
-
-  formBuilder() {
+  formBuilder(currentFilters) {
     const formFields = this._entryValues.map(({ type, path, value, label, negate }) => {
       let filterExist =
-        this._currentFilters.findIndex(
+        currentFilters.findIndex(
           filter => filter.key === path && filter.value === value && filter.negate === negate
         ) !== -1;
       switch (type) {
         case 'text':
+        case 'link':
           const lbl = label ? `<strong>${label}: </strong>` : '';
           return `
-            <label class="po-checkbox">
+            <label class="po-select po-checkbox">
               <span>${lbl}${value}</span>
-              <input type="checkbox" ${filterExist &&
-                'checked'} id="${path}" name="${path}" value="${value}">
+              <input type="checkbox" ${filterExist && 'checked'} id="${path}" name="${path}" value="${value}">
               <span class="checkmark"></span>
             </label>
             `;
-          case 'image':
-            return `
-              <label class="po-checkbox">
+        case 'image':
+          return `
+              <label class="po-select po-image">
                 <input type="checkbox" ${filterExist &&
                   'checked'} id="${path}" name="${path}" value="${value}">
-                <div class="image-container" 
-                  style="background-image: url('${value}');
-                  background-size: cover;
-                  background-position: center;
-                  height: 60px; width: 60px;">
+                <div class="po-image-container">
+                  <div style="background-image: url('${value}')"></div>
                 </div>
               </label>
             `;
@@ -128,8 +132,6 @@ class Popover {
           return null;
       }
     });
-
- 
 
     return `
       <form class="object-filter-form">
@@ -155,47 +157,26 @@ class Popover {
 
   setForm(entryValues, currentFilters, callback) {
     this._entryValues = entryValues;
-    this._currentFilters = currentFilters;
     this._callback = callback;
-    const formhtml = this.formBuilder();
+    const formhtml = this.formBuilder(currentFilters);
     this.setContent(formhtml);
   }
 
   setContent(content) {
     setTimeout(() => {
-      if (this._selected) {
-        this._selected.setContent('');
-        this._selected.setContent(content);
+      if (this._instance) {
+        this._instance.setContent('');
+        this._instance.setContent(content);
       }
     }, 0);
   }
 
   hide() {
-    if (this._selected) {
-      this._selected.hide();
-    }
-  }
-
-  isInit() {
-    return this._popovers.length > 0;
-  }
-
-  destroy() {
-    this._callback = null;
-    this._selected = null;
-    for (let popover of this._popovers) {
-      popover.unmount();
-      popover.destroy();
-    }
-    for (let oberver of this._observers) {
-      oberver.disconnect();
-    }
-    this._popovers.length = 0;
-    this._observers.length = 0;
-    this._entryValues.length = 0;
-    this._currentFilters.length = 0;
-    $('body').off('submit', '.object-filter-form', this.processForm.bind(this));
-    $('body').off('click', '.select-filters', this.allSelected.bind(this));
+    setTimeout(() => {
+      if (this._instance) {
+        this._instance.hide();
+      }
+    }, 0);
   }
 }
 

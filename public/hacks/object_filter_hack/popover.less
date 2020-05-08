@@ -37,6 +37,33 @@
         margin-bottom: 4px;
         text-align: right;
     }
+    .po-image {
+        display: block;
+        position: relative;
+        margin: 2px 0;
+        line-height: 1;
+        .po-image-container  {
+            display: inline-block;
+            border: 2px solid transparent;
+            padding: 2px;
+            cursor: pointer;
+            & > div {
+                background-size: cover;
+                background-position: center;
+                width: 60px;
+                height: 60px; 
+            }
+        }
+        input {
+            position: absolute;
+            opacity: 0;
+            height: 0;
+            width: 0;
+            &:checked~.po-image-container {     
+                border-color: #006BB4;
+            }
+        }
+    }
     .po-checkbox {
         display: block;
         position: relative;
@@ -61,6 +88,10 @@
                 background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='8' viewBox='0 0 10 8'%3E%3Cpath d='M.375 2.625L3.375 5.625M3.375 5.625L8.625.375' fill='none' fill-rule='evenodd' stroke='rgb%28255, 255, 255%29' stroke-linecap='round' stroke-width='1.5' transform='translate(.5 1)'/%3E%3C/svg%3E");
             }
             &:focus~.checkmark {
+                border-color: #006BB4;
+                animation: 350ms cubic-bezier(0.694, 0.0482, 0.335, 1) 1 normal forwards focusRingAnimate !important;
+            }
+            &:checked~.image-container {     
                 border-color: #006BB4;
                 animation: 350ms cubic-bezier(0.694, 0.0482, 0.335, 1) 1 normal forwards focusRingAnimate !important;
             }
