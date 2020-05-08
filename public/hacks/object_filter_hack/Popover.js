@@ -2,7 +2,6 @@ import _ from 'lodash';
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/light.css';
-import '../../common/jquery-plugins/observer';
 
 const DEFAULT_PROPS = {
   content: 'LOADING',
