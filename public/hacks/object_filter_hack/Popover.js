@@ -81,7 +81,7 @@ class Popover {
     const formFields = $('.object-filter-form').serializeArray();
     const selectedEntryValues = this._entryValues.map(entryValue => ({
       ...entryValue,
-      checked: formFields.findIndex(field => field.value === entryValue.value) !== -1,
+      checked: formFields.findIndex(field => field.value === entryValue.value || field.value === entryValue.dHashValue) !== -1,
     }));
 
     this._instance.hide();
@@ -101,10 +101,10 @@ class Popover {
   }
 
   formBuilder(currentFilters) {
-    const formFields = this._entryValues.map(({ type, path, value, label, negate }) => {
+    const formFields = this._entryValues.map(({ label, type, path,value, dHashPath, dHashValue, negate }) => {
       let filterExist =
         currentFilters.findIndex(
-          filter => filter.key === path && filter.value === value && filter.negate === negate
+          filter => (filter.key === path || filter.key === dHashPath) && (filter.value === value || filter.value === dHashValue) && filter.negate === negate
         ) !== -1;
       switch (type) {
         case 'text':
@@ -113,19 +113,19 @@ class Popover {
           return `
             <label class="po-select po-checkbox">
               <span>${lbl}${value}</span>
-              <input type="checkbox" ${filterExist && 'checked'} id="${path}" name="${path}" value="${value}">
+              <input type="checkbox" ${filterExist && 'checked'} name="${path}" value="${value}">
               <span class="checkmark"></span>
             </label>
             `;
         case 'image':
           return `
               <label class="po-select po-image">
-                <input type="checkbox" ${filterExist &&
-                  'checked'} id="${path}" name="${path}" value="${value}">
+                <input type="checkbox" ${filterExist && 'checked'} name="${dHashPath || path}" value="${dHashValue || value}">
                 <div class="po-image-container">
                   <div style="background-image: url('${value}')"></div>
                 </div>
               </label>
+              ${dHashPath && `<div><input type="number" name="${dHashPath}-distance" value="8" min="0" max="32"></div>`}
             `;
         default:
           return null;

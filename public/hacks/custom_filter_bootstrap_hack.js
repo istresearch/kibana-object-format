@@ -58,6 +58,39 @@ filterManager.register = customFilter => {
           },
         },
       ]);
+    const addImageSimilarityFunc = (field, dHash, distance = 8) => {
+      console.log(field, dHash, distance);
+      addFiltersOriginal.apply(filterManager, [
+        {
+          ...newFilter,
+          meta: {
+            alias: `Image Similarity: ${dHash} (${distance})`,
+            negate: newFilter.meta.negate,
+            index: newFilter.meta.index,
+          },
+          query: {
+            bool: {
+              must: {
+                script: {
+                  script: {
+                    lang: 'painless',
+                    params: {
+                      dhash: dHash,
+                      distance: distance,
+                      field: field,
+                    },
+                    source:
+                      'if(!doc.containsKey(params.field) || doc[params.field].empty) { return false; } else { return new BigInteger(params.dhash, 16).xor(new BigInteger(doc[params.field].value, 16)).bitCount() < params.distance; }',
+                  },
+                },
+              },
+            },
+          },
+        },
+      ]);
+
+    }
+
     const removeFunc = (filterName, entryValue, negate) => {
       const currentFilters = filterManager.getFilters();
 
@@ -76,8 +109,8 @@ filterManager.register = customFilter => {
     };
     const getCurrentFilters = () =>
       filterManager.getFilters().map(filter => ({
-        key: _.get(filter, 'meta.key', null),
-        value: _.get(filter, 'meta.params.query', null),
+        key: _.get(filter, 'query.bool.must.script.script.params.field', null) ||  _.get(filter, 'meta.key', null),
+        value: _.get(filter, 'query.bool.must.script.script.params.dhash', null) || _.get(filter, 'meta.params.query', null),
         negate: _.get(filter, 'meta.negate', null),
         disable: _.get(filter, 'meta.disable', null),
       }));
@@ -88,6 +121,7 @@ filterManager.register = customFilter => {
       values,
       meta,
       addFunc,
+      addImageSimilarityFunc,
       removeFunc,
       getCurrentFilters,
     };

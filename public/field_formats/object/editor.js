@@ -146,6 +146,25 @@ export class ObjectFormatEditor extends DefaultFormatEditor {
         },
       },
       {
+        field: 'dHashPath',
+        name: 'Hash Field',
+        render: (value, item) => {
+          return (
+            <EuiFieldText
+              value={value}
+              onChange={e => {
+                this.onFieldChange(
+                  {
+                    dHashPath: e.target.value,
+                  },
+                  item.index
+                );
+              }}
+            />
+          );
+        },
+      },
+      {
         field: 'limit',
         name: 'Array Limit',
         width: '100px',
