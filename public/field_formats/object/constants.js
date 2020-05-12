@@ -10,6 +10,7 @@ export const DEFAULT_VALUES = {
     path: null, // Dot notated location of the value within the object, relative to basePath
     type: 'text',
     filtered: true, // To enable the filtering on cell click
+    dHashField: null,
     filterField: null, // If the data is analyzed, and there is a keyword subfield we can use for the filter
     height: null, // Image dimension in px
     width: null, // Image dimension in px

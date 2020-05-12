@@ -4,6 +4,7 @@ import {
   EuiButton,
   EuiSpacer,
   EuiFieldText,
+  EuiTextArea,
   EuiFormRow,
   EuiFieldNumber,
   EuiSelect,
@@ -118,6 +119,25 @@ export class ObjectFormatEditor extends DefaultFormatEditor {
                 this.onFieldChange(
                   {
                     path: e.target.value,
+                  },
+                  item.index
+                );
+              }}
+            />
+          );
+        },
+      },
+      {
+        field: 'dHashField',
+        name: 'Hash Field',
+        render: (value, item) => {
+          return (
+            <EuiFieldText
+              value={value}
+              onChange={e => {
+                this.onFieldChange(
+                  {
+                    dHashField: e.target.value,
                   },
                   item.index
                 );
@@ -267,6 +287,16 @@ export class ObjectFormatEditor extends DefaultFormatEditor {
         <EuiButton iconType="plusInCircle" size="s" onClick={this.addField}>
           Add Field
         </EuiButton>
+        <EuiSpacer size="l" />
+        <EuiFormRow label="Image Similarity Script (Painless)" helpText="(optional)">
+          <EuiTextArea
+            fullWidth
+            value={formatParams.similarityScript}
+            onChange={e => {
+              this.onChange({ similarityScript: e.target.value });
+            }}
+          />
+        </EuiFormRow>
         <EuiSpacer size="l" />
       </Fragment>
     );

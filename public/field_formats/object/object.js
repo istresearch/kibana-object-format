@@ -37,6 +37,7 @@ export class ObjectFormat extends FieldFormat {
       fieldType: null, // populated by editor, see controller
       basePath: null, // If multiple fields should be grouped, this is the common parent
       limit: null, // // If basePath is an array, this is the max we will show
+      similarityScript: null,
       fields: [{ ...DEFAULT_VALUES }],
     };
   }
