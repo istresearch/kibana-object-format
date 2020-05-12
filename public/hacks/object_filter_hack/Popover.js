@@ -79,9 +79,11 @@ class Popover {
     e.stopPropagation();
 
     const formFields = $('.object-filter-form').serializeArray();
+    console.log(formFields)
     const selectedEntryValues = this._entryValues.map(entryValue => ({
       ...entryValue,
       checked: formFields.findIndex(field => field.value === entryValue.value || field.value === entryValue.dHashValue) !== -1,
+      distance: entryValue.dHashValue && formFields.find(field => field.name === `${entryValue.dHashValue}-distance`).value,
     }));
 
     this._instance.hide();
@@ -102,10 +104,19 @@ class Popover {
 
   formBuilder(currentFilters) {
     const formFields = this._entryValues.map(({ label, type, path,value, dHashPath, dHashValue, negate }) => {
-      let filterExist =
+      let filterIndex =
         currentFilters.findIndex(
           filter => (filter.key === path || filter.key === dHashPath) && (filter.value === value || filter.value === dHashValue) && filter.negate === negate
-        ) !== -1;
+        );
+
+      const filterExist = filterIndex !== -1;
+
+      let distance = 8;
+
+       if (filterIndex >= 0) {
+        distance = currentFilters[filterIndex].distance;
+       }
+
       switch (type) {
         case 'text':
         case 'link':
@@ -125,7 +136,7 @@ class Popover {
                   <div style="background-image: url('${value}')"></div>
                 </div>
               </label>
-              ${dHashPath && `<div><input type="number" name="${dHashPath}-distance" value="8" min="0" max="32"></div>`}
+              ${dHashPath && `<div><input type="number" name="${dHashValue}-distance" value="${distance}" min="0" max="32"></div>`}
             `;
         default:
           return null;

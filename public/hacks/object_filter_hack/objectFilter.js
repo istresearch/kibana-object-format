@@ -90,21 +90,22 @@ export default ({
  
     popover.setForm(entryValues, currentFilters, selectedentryValues => {
       for (let sVal of selectedentryValues) {
+        console.log(sVal)
         if (sVal.checked) {
           if (sVal.dHashValue) {
-            addImageSimilarityFunc(sVal.dHashPath, sVal.dHashValue);
+            addImageSimilarityFunc(sVal.dHashPath, sVal.dHashValue, sVal.distance);
           } else {
             addFunc(sVal.path, sVal.value);
           }
         } else {
-          removeFunc(sVal.path, sVal.value, sVal.negate);
+          removeFunc(sVal.dHashPath || sVal.path, sVal.dHashValue || sVal.value, sVal.negate);
         }
       }  
     });
   } else if (entryValues.length === 1) {
     popover.hide();
     const entryValue = entryValues[0];
-    //addFunc(entryValue.path, entryValue.value);
+    addFunc(entryValue.path, entryValue.value);
   }
 
   return true;

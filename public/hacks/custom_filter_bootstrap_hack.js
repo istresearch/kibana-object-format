@@ -42,7 +42,18 @@ filterManager.register = customFilter => {
     const params = fieldName && fieldFormatMap[fieldName] ? fieldFormatMap[fieldName]._params : {};
     const values = fieldName && matchPhrase[fieldName] ? matchPhrase[fieldName] : {};
     const meta = { negate: newFilter.meta.negate };
-    const addFunc = (filterName, entryValue, alias = null) =>
+
+
+    const getCurrentFilters = () =>
+      filterManager.getFilters().map(filter => ({
+        key: _.get(filter, 'query.bool.must.script.script.params.field', null) || _.get(filter, 'meta.key', null),
+        value: _.get(filter, 'query.bool.must.script.script.params.dhash', null) || _.get(filter, 'meta.params.query', null),
+        negate: _.get(filter, 'meta.negate', null),
+        distance:  _.get(filter, 'query.bool.must.script.script.params.distance', null),
+        disable: _.get(filter, 'meta.disable', null),
+      }));
+
+      const addFunc = (filterName, entryValue, alias = null) => // 1111  Add check to see if the filter already exists, if so ignore and don't change.
       addFiltersOriginal.apply(filterManager, [
         {
           ...newFilter,
@@ -58,8 +69,10 @@ filterManager.register = customFilter => {
           },
         },
       ]);
+
     const addImageSimilarityFunc = (field, dHash, distance = 8) => {
-      console.log(field, dHash, distance);
+      removeFunc(field, dHash, newFilter.meta.negate);
+
       addFiltersOriginal.apply(filterManager, [
         {
           ...newFilter,
@@ -76,7 +89,7 @@ filterManager.register = customFilter => {
                     lang: 'painless',
                     params: {
                       dhash: dHash,
-                      distance: distance,
+                      distance: parseInt(distance, 10),
                       field: field,
                     },
                     source:
@@ -88,32 +101,25 @@ filterManager.register = customFilter => {
           },
         },
       ]);
-
-    }
+    };
 
     const removeFunc = (filterName, entryValue, negate) => {
-      const currentFilters = filterManager.getFilters();
+      const currentFilters = getCurrentFilters();
+      const currentFilters2 = filterManager.getFilters();
 
       if (currentFilters.length > 0) {
         const filterIndex = currentFilters.findIndex(
-          filter =>
-            filter.meta.key === filterName &&
-            filter.meta.params.query === entryValue &&
-            filter.meta.negate === negate
+          filter => filter.key === filterName && filter.value === entryValue && filter.negate === negate
         );
 
+        console.log(filterIndex);
+
         if (filterIndex >= 0) {
-          filterManager.removeFilter(currentFilters[filterIndex]);
+          filterManager.removeFilter(currentFilters2[filterIndex]);
         }
       }
     };
-    const getCurrentFilters = () =>
-      filterManager.getFilters().map(filter => ({
-        key: _.get(filter, 'query.bool.must.script.script.params.field', null) ||  _.get(filter, 'meta.key', null),
-        value: _.get(filter, 'query.bool.must.script.script.params.dhash', null) || _.get(filter, 'meta.params.query', null),
-        negate: _.get(filter, 'meta.negate', null),
-        disable: _.get(filter, 'meta.disable', null),
-      }));
+
     const filterParams = {
       fieldName,
       formatType,
