@@ -71,7 +71,8 @@ filterManager.register = customFilter => {
       ]);
 
     const addImageSimilarityFunc = (field, dHash, distance = 8) => {
-      removeFunc(field, dHash, newFilter.meta.negate);
+      removeFunc(field, dHash, true);
+      removeFunc(field, dHash, false);
 
       addFiltersOriginal.apply(filterManager, [
         {
