@@ -6,6 +6,7 @@
     opacity: 1 !important;
     color: #006BB4;
 }
+
 .tippy-box {
     &:focus:not([class^='eui']):not(.kbn-resetFocusState),
     :focus:not([class^='eui']):not(.kbn-resetFocusState) {
@@ -17,13 +18,16 @@
         justify-content: space-between;
         padding: 6px 0 2px;
         margin-bottom: 4px;
+
         .select-filters {
             font-weight: bold;
             font-family: "Inter UI";
             font-weight: 400;
             letter-spacing: -.005em;
             font-size: 12px;
-            &:hover, &:focus {
+
+            &:hover,
+            &:focus {
                 text-decoration: underline !important;
             }
         }
@@ -42,16 +46,17 @@
         position: relative;
         margin: 2px 0;
         line-height: 1;
-        .po-image-container  {
+        .po-image-container {
             display: inline-block;
             border: 2px solid transparent;
             padding: 2px;
             cursor: pointer;
-            & > div {
+
+            &>div {
                 background-size: cover;
                 background-position: center;
                 width: 60px;
-                height: 60px; 
+                height: 60px;
             }
         }
         input {
@@ -59,7 +64,8 @@
             opacity: 0;
             height: 0;
             width: 0;
-            &:checked~.po-image-container {     
+
+            &:checked~.po-image-container {
                 border-color: #006BB4;
             }
         }
@@ -83,15 +89,18 @@
             cursor: pointer;
             height: 0;
             width: 0;
+
             &:checked~.checkmark {
                 background-color: #006BB4;
                 background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='8' viewBox='0 0 10 8'%3E%3Cpath d='M.375 2.625L3.375 5.625M3.375 5.625L8.625.375' fill='none' fill-rule='evenodd' stroke='rgb%28255, 255, 255%29' stroke-linecap='round' stroke-width='1.5' transform='translate(.5 1)'/%3E%3C/svg%3E");
             }
+
             &:focus~.checkmark {
                 border-color: #006BB4;
                 animation: 350ms cubic-bezier(0.694, 0.0482, 0.335, 1) 1 normal forwards focusRingAnimate !important;
             }
-            &:checked~.image-container {     
+
+            &:checked~.image-container {
                 border-color: #006BB4;
                 animation: 350ms cubic-bezier(0.694, 0.0482, 0.335, 1) 1 normal forwards focusRingAnimate !important;
             }
@@ -112,4 +121,42 @@
             transition: background-color 150ms ease-in, border-color 150ms ease-in;
         }
     }
+    .po-image-container {
+        display: flex;
+        align-items: center;
+        .range-slider {
+            position: relative;
+            flex-direction: column;
+            display: flex;
+            padding: 12px;
+            input::-webkit-outer-spin-button,
+            input::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+            input:last-child {
+                border-radius: 4px;
+                font-size: 14px;
+                align-self: center;
+                margin-top: 8px;
+                padding: 6px;
+                border: 1px solid #c8cfda;
+                -moz-appearance: textfield;
+            }
+            .range-label {
+                font-size: 11px;
+                position: absolute;
+                color: #686f7d;
+                &.first {
+                    top: 30px;
+                    left: 12px;
+                }
+                &.last {
+                    top: 30px;
+                    right: 12px;
+                }
+            }
+        }
+    }
 }
+

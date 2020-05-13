@@ -42,6 +42,7 @@ class Popover {
     );
     $('body').on('click.selectFilters', '.select-filters', this.handlerSelectAll.bind(this));
     $('body').on('click.filterPopver', '.tippy-filter-button', this.handlerShowPopover.bind(this));
+    $('input[type="range"]').rangeslider();
   }
 
   destroy() {
@@ -107,7 +108,7 @@ class Popover {
           filter => [path, dHashPath].includes(filter.path) && [value, dHashValue].includes(filter.value) && filter.negate === negate
         );
         const filterExist = filterIndex !== -1;
-        let distance = filterIndex >= 0 ? currentFilters[filterIndex].distance : 8;
+        let distance = filterIndex >= 0 ? currentFilters[filterIndex].distance : 16;
 
         switch (type) {
           case 'text':
@@ -122,13 +123,22 @@ class Popover {
             `;
           case 'image':
             return `
-              <label class="po-select po-image">
-                <input type="checkbox" ${filterExist && 'checked'} name="${dHashPath || path}" value="${dHashValue || value}">
-                <div class="po-image-container">
-                  <div style="background-image: url('${value}')"></div>
-                </div>
-              </label>
-              ${dHashValue && `<div><input type="number" name="${dHashValue}-distance" value="${distance}" min="0" max="32"></div>`}
+              <div class="po-image-container">
+                <label class="po-select po-image">
+                  <input type="checkbox" ${filterExist && 'checked'} name="${dHashPath || path}" value="${dHashValue || value}">
+                  <div class="po-image-container">
+                    <div style="background-image: url('${value}')"></div>
+                  </div>
+                </label>
+                ${dHashValue && `
+                  <div class="range-slider">
+                    <div class="range-label first">Exact</div>
+                    <div class="range-label last">Fuzzy</div>
+                    <input type="range" name="${dHashValue}-distance-range" step="1" min="0" max="31" value="${distance}" data-rangeslider>
+                    <input type="number" name="${dHashValue}-distance"  min="0" max="31" value="${distance}" data-range-input>
+                  </div>
+                `}
+              </div>
             `;
           default:
             return null;
@@ -170,8 +180,18 @@ class Popover {
       if (this._instance) {
         this._instance.setContent('');
         this._instance.setContent(content);
+        this.rangeSlider();
       }
     }, 0);
+  }
+
+  rangeSlider() {
+    $('[data-rangeslider]').on("change mousemove", function() {
+        $(this).next().val($(this).val());
+     });
+     $('[data-range-input]').on("input", function() {
+      $(this).prev().val($(this).val());
+   });
   }
 
   hide() {
