@@ -11,15 +11,16 @@ export default ({
   params,
   values,
   meta,
-  addFunc,
-  removeFunc,
+  addFilter,
+  addImageSimilarityFilter,
+  removeFilter,
   getCurrentFilters,
 }) => {
   if (formatType !== 'ist-object') {
     return false;
   }
 
-  const { basePath, limit } = params;
+  const { basePath, limit: baseLimit } = params;
   let vals = basePath ? _.get(values, basePath) : values;
 
   if (!_.isArray(vals)) {
@@ -28,27 +29,105 @@ export default ({
 
   const entryValues = [];
 
-  for (let i = 0, len = limit || vals.length; i < len; i++) {
+  for (let i = 0, len = baseLimit && vals.length >= baseLimit ? baseLimit : vals.length; i < len; i++) {
     let val = vals[i];
 
     for (let fieldEntry of params.fields) {
-      let { path } = fieldEntry;
-      let fullPath = basePath ? [fieldName, basePath, path].join('.') : [fieldName, path].join('.');
+      let { path, limit: fieldLimit, dHashField, filterField } = fieldEntry;
 
-      if (fieldEntry.filterField) {
-        fullPath = [fullPath, fieldEntry.filterField].join('.');
+      let fullFieldPath = basePath ? `${fieldName}.${basePath}.${path}` : `${fieldName}.${path}`;
+      let fullDHashFieldPath = basePath
+        ? `${fieldName}.${basePath}.${dHashField}`
+        : `${fieldName}.${dHashField}`;
+
+      if (filterField) {
+        fullFieldPath = `${fullFieldPath}.${filterField}`;
+        fullDHashFieldPath = `${fullDHashFieldPath}.${filterField}`;
       }
 
-      const plucked = _.getPluck(val, path);
+      let fieldValues = _.getPluck(val, path, null);
+      let dHashValues = _.getPluck(val, dHashField, null);
 
-      if (_.isArray(plucked)) {
-        for (let i = 0, len = fieldEntry.limit || plucked.length; i < len; i++) {
-          let v = plucked[i];
+      if (!_.isArray(fieldValues)) {
+        fieldValues = [fieldValues];
+      }
+
+      if (!_.isArray(dHashValues)) {
+        dHashValues = [dHashValues];
+      }
+
+      for (let i = 0, len = fieldLimit && fieldValues.length >= fieldLimit ? fieldLimit : fieldValues.length;  i < len; i++) {
+        let fieldValue = fieldValues.length > i ? fieldValues[i] : null;
+        let dHashValue = dHashValues.length > i ? dHashValues[i] : null;
+
+        entryValues.push({
+          ...fieldEntry,	            
+          negate: meta.negate,	           
+          path: fullFieldPath,	          
+          value: fieldValue,	             
+          dHashPath: dHashValue && fullDHashFieldPath,
+          dHashValue,
+        });	  
+      }
+    }
+  }
+
+  if (entryValues.length > 1 || entryValues.filter(v => !!v.dHashValue).length) {
+    const currentFilters = getCurrentFilters();
+ 
+    popover.setForm(entryValues, currentFilters, formValues => {
+      for (let formValue of formValues) {
+        let { path, value, dHashPath, dHashValue, distance, negate, checked } = formValue;
+        if (checked) {
+          if (dHashValue) {
+            addImageSimilarityFilter({ path: dHashPath, value: dHashValue, distance })
+          } else {
+            addFilter({ path, value, negate });
+          }
+        } else {
+          removeFilter({ path: dHashPath || path, value: dHashValue || value, negate });
+        }
+      }  
+    });
+  } else if (entryValues.length === 1) {
+    popover.hide();
+    const { path, value, negate } = entryValues[0];
+    addFilter({ path, value, negate });
+  }
+
+  return true;
+};
+
+ 
+/*
+
+
+
+
+
+
+
+
+
+
+      const resultValues = _.getPluck(val, fieldPath);
+      const dHashResultValues = _.getPluck(val, dHashFieldPath);
+
+      console.log(resultValues, dHashResultValues);
+
+      if (_.isArray(resultValues)) {
+        const resultValuesLen = fieldLimit && resultValues.length >= fieldLimit ? fieldLimit : resultValues.length;
+
+        for (let i = 0, len = resultValuesLen; i < len; i++) {
+          let resultValue = resultValues[i];
+          let dHashValue = dHashResultValues && dHashResultValues.length ? dHashResultValues[i] : null;
+
           entryValues.push({
             ...fieldEntry,
             negate: meta.negate,
             path: fullPath,
-            value: v,
+            value: resultValue,
+            dHashValue,
           });
         }
       } else {
@@ -67,20 +146,19 @@ export default ({
   if (entryValues.length > 1) {
     const currentFilters = getCurrentFilters();
 
-    popover.setForm(entryValues, currentFilters, selectedentryValues => {
-      for (let sVal of selectedentryValues) {
-        if (sVal.checked) {
-          addFunc(sVal.path, sVal.value);
+    popover.setForm(entryValues, currentFilters, selectedEntryValues => {
+      for (let selectedEntryValue of selectedEntryValues) {
+        let { path, value, checked, negate } = selectedEntryValue;
+        if (checked) {
+          addFilter({ path, value, negate });
         } else {
-          removeFunc(sVal.path, sVal.value, sVal.negate);
+          removeFilter({ path, value, negate });
         }
       }
     });
   } else if (entryValues.length === 1) {
     popover.hide();
-    const entryValue = entryValues[0];
-    addFunc(entryValue.path, entryValue.value);
+    const { path, value, negate } = entryValues[0];
+    addFilter({ path, value, negate });
   }
-
-  return true;
-};
+*/

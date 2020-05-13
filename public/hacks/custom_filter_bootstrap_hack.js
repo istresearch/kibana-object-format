@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { npStart } from 'ui/new_platform';
 import '../common/jquery-plugins/observer';
+import FilterManagerHelper from './FilterManagerHelper'
 
 const {
   query: { filterManager },
@@ -15,9 +16,12 @@ filterManager.register = customFilter => {
   filterManager.customFilters.push(customFilter);
 };
 
-(async (indexPatterns, addFiltersOriginal) => {
+
+(async (indexPatterns, addFiltersCached) => {
   const indexPatternList = await indexPatterns.getFields(['id', 'title']);
   let selectedIndexPattern = null;
+
+  const filterManagerHelper = new FilterManagerHelper(addFiltersCached);
 
   await $('body').observe('.indexPattern__triggerButton', async () => {
     const ipTitle = $('.indexPattern__triggerButton > span > span').text();
@@ -33,63 +37,31 @@ filterManager.register = customFilter => {
     }
 
     const { fieldFormatMap } = selectedIndexPattern;
+
     const newFilter = newFilters[0];
-    const matchPhrase = _.get(newFilter, 'query.match_phrase', {});
-    const newFilterKeys = Object.keys(matchPhrase);
-    const fieldName = newFilterKeys.length === 1 ? newFilterKeys[0] : null;
-    const formatType =
-      fieldName && fieldFormatMap[fieldName] ? fieldFormatMap[fieldName].type.id : null;
-    const params = fieldName && fieldFormatMap[fieldName] ? fieldFormatMap[fieldName]._params : {};
-    const values = fieldName && matchPhrase[fieldName] ? matchPhrase[fieldName] : {};
-    const meta = { negate: newFilter.meta.negate };
-    const addFunc = (filterName, entryValue, alias = null) =>
-      addFiltersOriginal.apply(filterManager, [
-        {
-          ...newFilter,
-          meta: {
-            alias,
-            negate: newFilter.meta.negate,
-            index: newFilter.meta.index,
-          },
-          query: {
-            match_phrase: {
-              [filterName]: entryValue,
-            },
-          },
-        },
-      ]);
-    const removeFunc = (filterName, entryValue, negate) => {
-      const currentFilters = filterManager.getFilters();
+    const matchPhrase =  _.get(newFilter, 'query.match_phrase', {});
+    const fieldNameKeys = Object.keys(matchPhrase);
+    
+    const fieldName = fieldNameKeys.length === 1 ? fieldNameKeys[0] : '';
+    const formatType = _.get(fieldFormatMap, [fieldName, 'type', 'id'], null); 
+    const params = _.get(fieldFormatMap, [fieldName, '_params'], {});   
+    const values = _.get(matchPhrase,[fieldName], {});   
+    const meta = _.get(newFilter, 'meta', {});  
 
-      if (currentFilters.length > 0) {
-        const filterIndex = currentFilters.findIndex(
-          filter =>
-            filter.meta.key === filterName &&
-            filter.meta.params.query === entryValue &&
-            filter.meta.negate === negate
-        );
+    const { getCurrentFilters, addFilter, addImageSimilarityFilter, removeFilter } = filterManagerHelper;
+    filterManagerHelper.newFilter = newFilter;
+    filterManagerHelper.similarityScript = _.get(params, 'similarityScript', '');  
 
-        if (filterIndex >= 0) {
-          filterManager.removeFilter(currentFilters[filterIndex]);
-        }
-      }
-    };
-    const getCurrentFilters = () =>
-      filterManager.getFilters().map(filter => ({
-        key: _.get(filter, 'meta.key', null),
-        value: _.get(filter, 'meta.params.query', null),
-        negate: _.get(filter, 'meta.negate', null),
-        disable: _.get(filter, 'meta.disable', null),
-      }));
     const filterParams = {
       fieldName,
       formatType,
       params,
       values,
       meta,
-      addFunc,
-      removeFunc,
-      getCurrentFilters,
+      addFilter: addFilter.bind(filterManagerHelper),
+      addImageSimilarityFilter: addImageSimilarityFilter.bind(filterManagerHelper),
+      removeFilter: removeFilter.bind(filterManagerHelper),
+      getCurrentFilters: getCurrentFilters.bind(filterManagerHelper),
     };
     let customFilterFlag = false;
 

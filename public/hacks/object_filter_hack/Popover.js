@@ -81,7 +81,8 @@ class Popover {
     const formFields = $('.object-filter-form').serializeArray();
     const selectedEntryValues = this._entryValues.map(entryValue => ({
       ...entryValue,
-      checked: formFields.findIndex(field => field.value === entryValue.value) !== -1,
+      checked: formFields.findIndex(field => field.value === entryValue.value || field.value === entryValue.dHashValue) !== -1,
+      distance: entryValue.dHashValue && formFields.find(field => field.name === `${entryValue.dHashValue}-distance`).value,
     }));
 
     this._instance.hide();
@@ -101,36 +102,39 @@ class Popover {
   }
 
   formBuilder(currentFilters) {
-    const formFields = this._entryValues.map(({ type, path, value, label, negate }) => {
-      let filterExist =
-        currentFilters.findIndex(
-          filter => filter.key === path && filter.value === value && filter.negate === negate
-        ) !== -1;
-      switch (type) {
-        case 'text':
-        case 'link':
-          const lbl = label ? `<strong>${label}: </strong>` : '';
-          return `
+    const formFields = this._entryValues.map(({ type, label, path, value, negate, dHashPath, dHashValue }) => {
+        const filterIndex = currentFilters.findIndex(
+          filter => [path, dHashPath].includes(filter.path) && [value, dHashValue].includes(filter.value) && filter.negate === negate
+        );
+        const filterExist = filterIndex !== -1;
+        let distance = filterIndex >= 0 ? currentFilters[filterIndex].distance : 8;
+
+        switch (type) {
+          case 'text':
+          case 'link':
+            const lbl = label ? `<strong>${label}: </strong>` : '';
+            return `
             <label class="po-select po-checkbox">
               <span>${lbl}${value}</span>
-              <input type="checkbox" ${filterExist && 'checked'} id="${path}" name="${path}" value="${value}">
+              <input type="checkbox" ${filterExist && 'checked'} name="${path}" value="${value}">
               <span class="checkmark"></span>
             </label>
             `;
-        case 'image':
-          return `
+          case 'image':
+            return `
               <label class="po-select po-image">
-                <input type="checkbox" ${filterExist &&
-                  'checked'} id="${path}" name="${path}" value="${value}">
+                <input type="checkbox" ${filterExist && 'checked'} name="${dHashPath || path}" value="${dHashValue || value}">
                 <div class="po-image-container">
                   <div style="background-image: url('${value}')"></div>
                 </div>
               </label>
+              ${dHashValue && `<div><input type="number" name="${dHashValue}-distance" value="${distance}" min="0" max="32"></div>`}
             `;
-        default:
-          return null;
+          default:
+            return null;
+        }
       }
-    });
+    );
 
     return `
       <form class="object-filter-form">
