@@ -29,13 +29,13 @@ const cleanTemplate = showPopover => {
       .attr('disabled', true);
 
     if (showPopover) {
-      $(`.collection-object-table`)
+      $(`.enable-filter-popover`)
         .closest('.kbnDocTableCell__dataField')
         .children('.kbnDocTableCell__filter')
         .children(`.kbnDocTableRowFilterButton`)
         .addClass('tippy-filter-button');
 
-      $(`.collection-object-table`)
+      $(`.enable-filter-popover`)
         .closest(`tr[data-test-subj]`)
         .children('.kbnDocViewer__buttons')
         .children('span')
