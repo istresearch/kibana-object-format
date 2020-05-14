@@ -42,7 +42,6 @@ class Popover {
     );
     $('body').on('click.selectFilters', '.select-filters', this.handlerSelectAll.bind(this));
     $('body').on('click.filterPopver', '.tippy-filter-button', this.handlerShowPopover.bind(this));
-    $('input[type="range"]').rangeslider();
   }
 
   destroy() {
