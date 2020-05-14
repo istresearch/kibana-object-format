@@ -1,9 +1,5 @@
 /* Placeholder for Filter Hack */
 import _ from 'lodash';
-import Popover from './Popover';
-import './popover.less';
-
-export const popover = new Popover();
 
 export default ({
   fieldName,
@@ -15,6 +11,7 @@ export default ({
   addImageSimilarityFilter,
   removeFilter,
   getCurrentFilters,
+  popover,
 }) => {
   if (formatType !== 'ist-object') {
     return false;
@@ -97,68 +94,3 @@ export default ({
 
   return true;
 };
-
- 
-/*
-
-
-
-
-
-
-
-
-
-
-      const resultValues = _.getPluck(val, fieldPath);
-      const dHashResultValues = _.getPluck(val, dHashFieldPath);
-
-      console.log(resultValues, dHashResultValues);
-
-      if (_.isArray(resultValues)) {
-        const resultValuesLen = fieldLimit && resultValues.length >= fieldLimit ? fieldLimit : resultValues.length;
-
-        for (let i = 0, len = resultValuesLen; i < len; i++) {
-          let resultValue = resultValues[i];
-          let dHashValue = dHashResultValues && dHashResultValues.length ? dHashResultValues[i] : null;
-
-          entryValues.push({
-            ...fieldEntry,
-            negate: meta.negate,
-            path: fullPath,
-            value: resultValue,
-            dHashValue,
-          });
-        }
-      } else {
-        if (plucked) {
-          entryValues.push({
-            ...fieldEntry,
-            negate: meta.negate,
-            path: fullPath,
-            value: plucked,
-          });
-        }
-      }
-    }
-  }
-
-  if (entryValues.length > 1) {
-    const currentFilters = getCurrentFilters();
-
-    popover.setForm(entryValues, currentFilters, selectedEntryValues => {
-      for (let selectedEntryValue of selectedEntryValues) {
-        let { path, value, checked, negate } = selectedEntryValue;
-        if (checked) {
-          addFilter({ path, value, negate });
-        } else {
-          removeFilter({ path, value, negate });
-        }
-      }
-    });
-  } else if (entryValues.length === 1) {
-    popover.hide();
-    const { path, value, negate } = entryValues[0];
-    addFilter({ path, value, negate });
-  }
-*/

@@ -1,12 +1,20 @@
 import _ from 'lodash';
+import { uiModules } from 'ui/modules';
 import { npStart } from 'ui/new_platform';
-import '../common/jquery-plugins/observer';
+import '../../common/jquery-plugins/observer';
 import FilterManagerHelper from './FilterManagerHelper'
+import Popover from './Popover';
+
+const app = uiModules.get('kibana');
 
 const {
   query: { filterManager },
   indexPatterns,
 } = npStart.plugins.data;
+
+const popover = new Popover();
+
+window.popover = popover;
 
 filterManager.register = customFilter => {
   if (!filterManager.customFilters) {
@@ -16,6 +24,21 @@ filterManager.register = customFilter => {
   filterManager.customFilters.push(customFilter);
 };
 
+app.run(['$rootScope', ($rootScope) => {
+  $rootScope.$on('$routeChangeSuccess', (_$event, next) => {
+    const {
+      $$route: { originalPath },
+    } = next;
+ 
+    if (popover.isInit()) {
+      popover.destroy();
+    }
+
+    if (originalPath.indexOf('/discover/') !== -1) {
+      popover.init();
+    }
+  });
+}]);
 
 (async (indexPatterns, addFiltersCached) => {
   const indexPatternList = await indexPatterns.getFields(['id', 'title']);
@@ -58,6 +81,7 @@ filterManager.register = customFilter => {
       params,
       values,
       meta,
+      popover,
       addFilter: addFilter.bind(filterManagerHelper),
       addImageSimilarityFilter: addImageSimilarityFilter.bind(filterManagerHelper),
       removeFilter: removeFilter.bind(filterManagerHelper),

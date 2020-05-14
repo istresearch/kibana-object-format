@@ -2,6 +2,7 @@ import _ from 'lodash';
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/light.css';
+import './popover.less';
 
 const DEFAULT_PROPS = {
   content: 'LOADING',
@@ -35,13 +36,11 @@ class Popover {
     this._instance = null;
     this._callback = null;
     this._entryValues = [];
-    $('body').on(
-      'submit.objectFilterForm',
-      '.object-filter-form',
-      this.handlerProcessForm.bind(this)
-    );
+    $('body').on( 'submit.objectFilterForm', '.object-filter-form', this.handlerProcessForm.bind(this));
     $('body').on('click.selectFilters', '.select-filters', this.handlerSelectAll.bind(this));
     $('body').on('click.filterPopver', '.tippy-filter-button', this.handlerShowPopover.bind(this));
+    $('body').on('mousemove.rangeSelector', '[data-rangeslider]', this.handlerDistanceRangeSlider);
+    $('body').on('input.rangeSelector', '[data-range-input]', this.handlerDistanceInput);
   }
 
   destroy() {
@@ -52,10 +51,30 @@ class Popover {
     $('body').off('submit.objectFilterForm');
     $('body').off('click.selectFilters');
     $('body').off('click.filterPopver');
+    $('body').off('mousemove.rangeSelector');
+    $('body').off('input.rangeSelector');
   }
 
   isInit() {
     return this._init;
+  }
+
+  handlerDistanceRangeSlider() {
+    $(this).next().val($(this).val());
+  }
+
+  handlerDistanceInput() {
+    let val = parseInt($(this).val(), 10);
+    if (isNaN(val)) {
+      val = 0;
+    } else if (val > 31) {
+      val = 31;
+    } else if (val < 0) {
+      val = 0;
+    }
+    
+    $(this).val(val);
+    $(this).prev().val(val);
   }
 
   handlerShowPopover(e) {
@@ -179,18 +198,8 @@ class Popover {
       if (this._instance) {
         this._instance.setContent('');
         this._instance.setContent(content);
-        this.rangeSlider();
       }
     }, 0);
-  }
-
-  rangeSlider() {
-    $('[data-rangeslider]').on("change mousemove", function() {
-        $(this).next().val($(this).val());
-     });
-     $('[data-range-input]').on("input", function() {
-      $(this).prev().val($(this).val());
-   });
   }
 
   hide() {

@@ -5,8 +5,8 @@ export default function(kibana) {
     uiExports: {
       hacks: [
         'plugins/kibana_object_format/hacks/field_mapper_hack',
-        'plugins/kibana_object_format/hacks/custom_filter_bootstrap_hack',
-        'plugins/kibana_object_format/hacks/object_filter_hack',
+        'plugins/kibana_object_format/hacks/custom_filter_bootstrap',
+        'plugins/kibana_object_format/hacks/object_filter',
       ],
       fieldFormats: ['plugins/kibana_object_format/field_formats/object/register'],
       uiSettingDefaults: {
