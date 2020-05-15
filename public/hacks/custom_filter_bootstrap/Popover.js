@@ -121,9 +121,9 @@ class Popover {
   }
 
   formBuilder(currentFilters) {
-    const formFields = this._entryValues.map(({ type, label, path, value, negate, dHashPath, dHashValue }) => {
+    const formFields = this._entryValues.map(({ type, label, path, value, valueActual, negate, dHashPath, dHashValue }) => {
         const filterIndex = currentFilters.findIndex(
-          filter => [path, dHashPath].includes(filter.path) && [value, dHashValue].includes(filter.value) && filter.negate === negate
+          filter => [path, dHashPath].includes(filter.path) && [value, valueActual, dHashValue].includes(filter.value) && filter.negate === negate
         );
         const filterExist = filterIndex !== -1;
         let distance = filterIndex >= 0 ? currentFilters[filterIndex].distance : 16;
