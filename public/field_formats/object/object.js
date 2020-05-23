@@ -3,8 +3,8 @@ import { FieldFormat } from '../../../../../src/plugins/data/public';
 import { getHighlightHtml } from '../../common/highlight';
 import { lodashOopMixin } from '../../common/lodash-mixins/oop';
 import { lodashGetPluckMixin } from '../../common/lodash-mixins/get_pluck';
-import cleanTemplate from '../../common/clean-template';
 import { DEFAULT_VALUES, ID, TITLE, FIELD_TYPE } from './constants';
+import cleanFieldTemplate from './cleanFieldTemplate';
 import format_html from './templates/object_format.html';
 import image_html from './templates/object_image.html';
 import link_html from './templates/object_link.html';
@@ -14,7 +14,7 @@ import './object.less';
 
 lodashOopMixin(_);
 lodashGetPluckMixin(_);
-cleanTemplate(false);
+cleanFieldTemplate(true);
 
 const vis_template = _.template(format_html);
 const image_template = _.template(image_html);
@@ -37,6 +37,7 @@ export class ObjectFormat extends FieldFormat {
       fieldType: null, // populated by editor, see controller
       basePath: null, // If multiple fields should be grouped, this is the common parent
       limit: null, // // If basePath is an array, this is the max we will show
+      similarityScript: null,
       fields: [{ ...DEFAULT_VALUES }],
     };
   }
