@@ -98,7 +98,7 @@ app.run(['$rootScope', ($rootScope) => {
     }
 
     if (!customFilterFlag) {
-      addFiltersOriginal.apply(filterManager, newFilters);
+      addFiltersCached.apply(filterManager, newFilters);
     }
   };
 })(indexPatterns, filterManager.addFilters);
