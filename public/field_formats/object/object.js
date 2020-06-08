@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { FieldFormat } from '../../../../../src/plugins/data/public';
+import { FieldFormat } from '../../../../../src/plugins/data/common/field_formats/field_format';
 import { getHighlightHtml } from '../../common/highlight';
 import { lodashOopMixin } from '../../common/lodash-mixins/oop';
 import { lodashGetPluckMixin } from '../../common/lodash-mixins/get_pluck';
