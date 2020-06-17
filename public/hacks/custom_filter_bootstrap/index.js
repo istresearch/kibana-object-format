@@ -34,34 +34,32 @@ app.run(['$rootScope', ($rootScope) => {
       popover.destroy();
     }
 
-    if (originalPath.indexOf('/discover/') !== -1) {
-      popover.init();
+    if (originalPath.indexOf('/discover/') !== -1 || originalPath.indexOf('/dashboard/') !== -1) {
+      popover.init(); 
     }
   });
 }]);
 
 (async (indexPatterns, addFiltersCached) => {
-  const indexPatternList = await indexPatterns.getFields(['id', 'title']);
-  let selectedIndexPattern = null;
+  const indexPatternIDList = await indexPatterns.getFields(['id']);
+  let indexPatternLookup = {};
+
+  for (let pattern of indexPatternIDList) {
+    let ip = await indexPatterns.get(pattern.id);
+    indexPatternLookup[pattern.id] = ip.fieldFormatMap;
+  }
 
   const filterManagerHelper = new FilterManagerHelper(addFiltersCached);
 
-  await $('body').observe('.indexPattern__triggerButton', async () => {
-    const ipTitle = $('.indexPattern__triggerButton > span > span').text();
-    const ip = indexPatternList.filter(ipItem => ipItem.title === ipTitle);
-    if (ip.length === 1) {
-      selectedIndexPattern = await indexPatterns.get(ip[0].id);
-    }
-  });
-
-  filterManager.addFilters = newFilters => {
+  filterManager.addFilters = (newFilters, a, b, c) => {
     if (_.isArray(newFilters) && newFilters.length !== 1) {
       return;
     }
 
-    const { fieldFormatMap } = selectedIndexPattern;
-
     const newFilter = newFilters[0];
+
+    const selectedIndexPatternID =  _.get(newFilter, 'meta.index', null);  
+    const fieldFormatMap = indexPatternLookup[selectedIndexPatternID];
     const matchPhrase =  _.get(newFilter, 'query.match_phrase', {});
     const fieldNameKeys = Object.keys(matchPhrase);
     
