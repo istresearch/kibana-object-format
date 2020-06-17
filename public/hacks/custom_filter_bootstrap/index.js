@@ -34,9 +34,7 @@ app.run(['$rootScope', ($rootScope) => {
       popover.destroy();
     }
 
-    if (originalPath.indexOf('/discover/') !== -1 || originalPath.indexOf('/dashboard/') !== -1) {
-      popover.init(); 
-    }
+    popover.init(); 
   });
 }]);
 
@@ -51,7 +49,7 @@ app.run(['$rootScope', ($rootScope) => {
 
   const filterManagerHelper = new FilterManagerHelper(addFiltersCached);
 
-  filterManager.addFilters = (newFilters, a, b, c) => {
+  filterManager.addFilters = newFilters => {
     if (_.isArray(newFilters) && newFilters.length !== 1) {
       return;
     }
