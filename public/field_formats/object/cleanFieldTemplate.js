@@ -62,8 +62,6 @@ const cleanTemplate = showPopover => {
 
 export default (showPopover = false) => {
   setTimeout(() => {
-    if ($('.application.tab-discover').length) {
-      cleanTemplate(showPopover);
-    }
+    cleanTemplate(showPopover);
   }, 0);
 };
