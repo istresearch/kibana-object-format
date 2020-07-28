@@ -1,7 +1,7 @@
 <% if (!filtered) { %>
-<table class="object-table object-table-no-filter <%= uid %>">
+<table class="collection-table collection-table-no-filter collection-object-table enable-filter-popover <%= uid %>">
 <% } else { %>
-<table class="object-table <%= uid %>">
+<table class="collection-table  collection-object-table  enable-filter-popover <%= uid %>">
 <% } %>
     <tbody>
 <%
@@ -20,43 +20,3 @@ _.forEach(fields, function(field, index) {
 %>
     </tbody>
 </table>
-<!-- [object field formatter] Change the 'white-space' css attribute of our containing div, and remove the warning icon -->
-<script>
-// Run this after angular has done it's thing
-setTimeout((function () {
-    // Discover table row
-    // Only set nowrap if parent is td.discover-table-datafield, do nothing if td.discover-table-sourcefield
-    $(".<%= uid %>")
-        .closest("td.discover-table-datafield")
-        .children(".truncate-by-height")
-        .css("white-space", "nowrap");
-
-    // Discover table expanded row
-    $(".<%= uid %>").closest("div.doc-viewer-value").css("white-space", "nowrap");
-    $(".<%= uid %>").closest("div.doc-viewer-value").siblings("i.fa-warning").remove();
-} ), 0);
-</script>
-<!-- [object field formatter] Hide the filter buttons if this formatter doesn't have filtering enabled -->
-<script>
-// Run this after angular has done it's thing
-setTimeout((function () {
-    // Discover table row
-    $(".object-table-no-filter.<%= uid %>")
-        .closest("td.discover-table-datafield")
-        .children(".table-cell-filter")
-        .empty();
-
-    // Discover table expanded row
-    var buttonsCell = $(".object-table-no-filter.<%= uid %>")
-                          .closest("div.doc-viewer-value")
-                          .closest("td")
-                          .siblings("td.doc-viewer-buttons");
-
-    if (buttonsCell) {
-        var span = buttonsCell.children("span:has(i.fa-search-plus)");
-        span.replaceWith(
-            "<span><i class=\"fa fa-search-plus text-muted\" style=\"padding-right: 7px;\"></i><i class=\"fa fa-search-minus text-muted\"></span>"
-        );
-    }
-} ), 0);
-</script>

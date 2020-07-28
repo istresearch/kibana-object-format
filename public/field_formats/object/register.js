@@ -1,7 +1,7 @@
-import { fieldFormats } from 'ui/registry/field_formats';
-import { createObjectFormat } from './object';
-fieldFormats.register(createObjectFormat);
+import { npSetup } from 'ui/new_platform';
+import { ObjectFormat } from './object';
+npSetup.plugins.data.fieldFormats.register([ObjectFormat]);
 
 import { RegistryFieldFormatEditorsProvider } from 'ui/registry/field_format_editors';
-import { objectEditor } from './object';
-RegistryFieldFormatEditorsProvider.register(objectEditor);
+import { ObjectFormatEditor } from './editor';
+RegistryFieldFormatEditorsProvider.register(() => ObjectFormatEditor);
