@@ -1,5 +1,5 @@
 import { ObjectFieldFormatStub } from './ObjectFieldFormatStub';
 
 export function registerFieldFormats(server) {
-  server.registerFieldFormat(ObjectFieldFormatStub);
+  server.newPlatform.setup.plugins.data.fieldFormats.register(ObjectFieldFormatStub);
 }

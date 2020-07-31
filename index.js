@@ -22,7 +22,7 @@ export default function(kibana) {
         },
       },
     },
-    init: async function(server) {
+    async init(server) {
       registerFieldFormats(server);
     },
     config(Joi) {
