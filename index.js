@@ -1,3 +1,5 @@
+import { registerFieldFormats } from './server/field-formatters';
+
 export default function(kibana) {
   return new kibana.Plugin({
     require: ['kibana'],
@@ -20,7 +22,9 @@ export default function(kibana) {
         },
       },
     },
-
+    init: async function(server) {
+      registerFieldFormats(server);
+    },
     config(Joi) {
       return Joi.object({
         enabled: Joi.boolean().default(true),
