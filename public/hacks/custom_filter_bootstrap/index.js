@@ -53,7 +53,6 @@ app.run([
   const filterManagerHelper = new FilterManagerHelper(addFiltersCached);
 
   filterManager.addFilters = (newFilters) => {
-    console.log(newFilters)
     if (_.isArray(newFilters) && newFilters.length === 0) {
       return;
     } 
