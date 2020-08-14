@@ -53,11 +53,12 @@ app.run([
   const filterManagerHelper = new FilterManagerHelper(addFiltersCached);
 
   filterManager.addFilters = (newFilters) => {
-    if (_.isArray(newFilters) && newFilters.length !== 1) {
-      addFiltersCached.apply(filterManager, newFilters);
-    } else {
-      const newFilter = newFilters[0];
+    console.log(newFilters)
+    if (_.isArray(newFilters) && newFilters.length === 0) {
+      return;
+    } 
 
+    for (let newFilter of newFilters) {
       const selectedIndexPatternID = _.get(newFilter, 'meta.index', null);
       const fieldFormatMap = indexPatternLookup[selectedIndexPatternID];
       const matchPhrase = _.get(newFilter, 'query.match_phrase', {});
@@ -101,7 +102,7 @@ app.run([
       }
 
       if (!customFilterFlag) {
-        addFiltersCached.apply(filterManager, newFilters);
+        addFiltersCached.apply(filterManager, [newFilter]);
       }
     }
   };
