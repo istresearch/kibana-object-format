@@ -8,7 +8,7 @@ This Kibana plugin enables you to configure field formatters for arrays of objec
 
 ## Features
 
- - Kibana 6.x and 5.x compatible
+ - Kibana 7.x compatible
  - Enables field formatting for objects and arrays of objects
  - Includes a general purpose Object field formatter to fit most needs with:
     - Hit highlighting
