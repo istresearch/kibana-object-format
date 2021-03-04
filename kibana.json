@@ -1,0 +1,9 @@
+{
+  "id": "kibana_object_format",
+  "version": "1.0.0",
+  "kibanaVersion": "kibana",
+  "server": true,
+  "ui": true,
+  "requiredPlugins": ["navigation", "data", "indexPatternManagement"],
+  "optionalPlugins": []
+}

@@ -1,0 +1,7 @@
+{
+  "prefix": "kibanaObjectFormat",
+  "paths": {
+    "kibanaObjectFormat": "."
+  },
+  "translations": ["translations/ja-JP.json"]
+}
