@@ -1,23 +1,28 @@
-import { AppMountParameters, CoreSetup, CoreStart, Plugin } from '../../../src/core/public';
-import {
-  StartPlugins,
-  PluginStart,
-  SetupPlugins,
-  PluginSetup,
-} from './types';
+import { AppMountParameters, CoreSetup, CoreStart, Plugin } from 'kibana/public';
+import { StartPlugins, PluginStart, SetupPlugins, PluginSetup } from './types';
 import { PLUGIN_NAME } from '../common';
 import { ObjectFieldFormat } from './field_formatters/ObjectFieldFormat';
 import { ObjectFieldFormatEditor } from './field_formatters/ObjectFieldFormatEditor';
+import { fieldMapper } from './field_mapper';
 
 export class KibanaObjectFormatPlugin
   implements Plugin<PluginSetup, PluginStart, SetupPlugins, StartPlugins> {
   public setup(core: CoreSetup<StartPlugins, PluginStart>, pluginSetup: SetupPlugins): PluginSetup {
     pluginSetup.indexPatternManagement.fieldFormatEditors.register(ObjectFieldFormatEditor);
 
-    core.getStartServices().then(([_, { data }]) => {
+    core.getStartServices().then(([{ uiSettings }, { data }]) => {
       data.fieldFormats.register([ObjectFieldFormat]);
-      return {};
-    })
+      const indexPatterns = data?.indexPatterns;
+
+      ((getFieldsForWildcardCached) => {
+        indexPatterns.getFieldsForWildcard = async (options: any) => {
+          const fields = await getFieldsForWildcardCached(options);
+
+          let indexPattern = { id: 'fake-id', title: ''}; // TO-DO - Need to find selected index pattern and feed it into fieldMapper Function
+          return fieldMapper({ uiSettings, fields, indexPattern });
+        };
+      })(indexPatterns.getFieldsForWildcard);
+    });
 
     // Register an application into the side navigation menu
     core.application.register({
@@ -29,7 +34,8 @@ export class KibanaObjectFormatPlugin
         // Get start services as specified in kibana.json
         const [coreStart, depsStart] = await core.getStartServices();
         // Render the application
-        return renderApp(coreStart, depsStart as StartPlugins, params)
+
+        return renderApp(coreStart, depsStart as StartPlugins, params);
       },
     });
 
@@ -41,5 +47,5 @@ export class KibanaObjectFormatPlugin
     return {};
   }
 
-  public stop() { }
+  public stop() {}
 }

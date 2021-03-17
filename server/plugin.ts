@@ -32,8 +32,8 @@ export class KibanaObjectFormatPlugin
     this.logger.debug('kibana_object_format: Setup');
     const router = core.http.createRouter();
     core.uiSettings.register({
-      custom: {
-        name: 'fieldMapperHack:fields',
+      'ObjectFieldMapper:fields': {
+        name: 'Object Field Mapper',
         value: FIELD_MAPPER_HACK_DEFAULT,
         schema: schema.object({
           index_pattern: schema.object({
