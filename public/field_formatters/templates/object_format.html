@@ -1,0 +1,22 @@
+<% if (!filtered) { %>
+<table class="collection-table collection-table-no-filter collection-object-table enable-filter-popover <%= uid %>">
+<% } else { %>
+<table class="collection-table  collection-object-table  enable-filter-popover <%= uid %>">
+<% } %>
+    <tbody>
+<%
+_.forEach(fields, function(field, index) {
+%>
+    <tr class="object-tr">
+<% if (field.label) { %>
+        <td class="object-td"><span class="object-label"><%- field.label %></span></td>
+<% } %>
+        <td class="object-td">
+            <%= field.html %>
+        </td>
+    </tr>
+<%
+});
+%>
+    </tbody>
+</table>

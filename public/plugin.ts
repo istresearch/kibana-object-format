@@ -2,6 +2,7 @@ import { AppMountParameters, CoreSetup, CoreStart, Plugin } from 'kibana/public'
 import { StartPlugins, PluginStart, SetupPlugins, PluginSetup } from './types';
 import { PLUGIN_NAME } from '../common';
 import { ObjectFieldFormat } from './field_formatters/ObjectFieldFormat';
+import { ObjectFormat } from './field_formatters/object/object';
 import { ObjectFieldFormatEditor } from './field_formatters/ObjectFieldFormatEditor';
 import { fieldMapper } from './field_mapper';
 
@@ -12,6 +13,7 @@ export class KibanaObjectFormatPlugin
 
     core.getStartServices().then(([{ uiSettings }, { data }]) => {
       data.fieldFormats.register([ObjectFieldFormat]);
+    //  data.fieldFormats.register([ObjectFormat]);
       const indexPatterns = data?.indexPatterns;
 
       ((getFieldsForWildcardCached) => {

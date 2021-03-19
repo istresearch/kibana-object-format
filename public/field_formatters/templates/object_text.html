@@ -1,0 +1,12 @@
+<%
+_.forEach(field.values, function(value, index) {
+if (value.display) {
+%>
+<div><%= value.display %></div>
+<%
+} else {
+%>
+<span style="white-space: pre;"> - </span>
+<%
+}});
+%>
