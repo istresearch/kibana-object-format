@@ -46,21 +46,24 @@ class Popover {
 
   private handlerShowPopover(e: JQuery.Event & { target: any }) {
     const self = this;
+    const buttonNode = e.target?.parentNode?.parentNode;
 
-    this.instance = tippy(e.target?.parentNode?.parentNode, {
-      onHide(instance) {
-        setTimeout(() => {
-          instance.unmount();
-          instance.destroy();
-          self.instance = null;
-        }, 100);
+    if ($(buttonNode).hasClass('tippy-filter-button')) {
+      this.instance = tippy(buttonNode, {
+        onHide(instance) {
+          setTimeout(() => {
+            instance.unmount();
+            instance.destroy();
+            self.instance = null;
+          }, 100);
 
-        $('.keep-icon-visible').removeClass('keep-icon-visible');
-      },
-    });
+          $('.keep-icon-visible').removeClass('keep-icon-visible');
+        },
+      });
 
-    $(e.target).addClass('keep-icon-visible');
-    this.instance.show();
+      $(e.target).addClass('keep-icon-visible');
+      this.instance.show();
+    }
   }
 
   private handlerProcessForm(e: JQuery.Event & { target: any }) {
