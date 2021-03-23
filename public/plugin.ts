@@ -1,10 +1,13 @@
-import { AppMountParameters, CoreSetup, CoreStart, Plugin } from 'kibana/public';
+import { CoreSetup, CoreStart, Plugin } from 'kibana/public';
 import { StartPlugins, PluginStart, SetupPlugins, PluginSetup } from './types';
-import { PLUGIN_NAME } from '../common';
 import { ObjectFieldFormat } from './field_formatters/ObjectFieldFormat';
-import { ObjectFormat } from './field_formatters/object/object';
 import { ObjectFieldFormatEditor } from './field_formatters/ObjectFieldFormatEditor';
 import { fieldMapper } from './field_mapper';
+import { Filter, GetFieldsOptions } from 'src/plugins/data/common';
+import { addFilters, initFilterManager, initPopover, setupAddFilters } from './field_filters_bootstrap';
+import { objectFilter } from './field_filters/objectFilter';
+import updateFieldFormatTemplate from './field_formatters/updateFieldFormatTemplate';
+import './utils/jqueryObserver';
 
 export class KibanaObjectFormatPlugin
   implements Plugin<PluginSetup, PluginStart, SetupPlugins, StartPlugins> {
@@ -13,39 +16,48 @@ export class KibanaObjectFormatPlugin
 
     core.getStartServices().then(([{ uiSettings }, { data }]) => {
       data.fieldFormats.register([ObjectFieldFormat]);
-    //  data.fieldFormats.register([ObjectFormat]);
       const indexPatterns = data?.indexPatterns;
 
       ((getFieldsForWildcardCached) => {
-        indexPatterns.getFieldsForWildcard = async (options: any) => {
+        indexPatterns.getFieldsForWildcard = async (options: GetFieldsOptions) => {
           const fields = await getFieldsForWildcardCached(options);
+          const { pattern } = options;
 
-          let indexPattern = { id: 'fake-id', title: ''}; // TO-DO - Need to find selected index pattern and feed it into fieldMapper Function
-          return fieldMapper({ uiSettings, fields, indexPattern });
+          return fieldMapper({ uiSettings, fields, pattern });
         };
       })(indexPatterns.getFieldsForWildcard);
+
+      const filterManager = data?.query?.filterManager;
+      initFilterManager(filterManager);
+
+      (async (addFiltersCached) => {
+        await setupAddFilters({
+          indexPatterns,
+          addFiltersCached,
+          filterManager,
+        });
+
+        filterManager.addFilters = async (filters: Filter | Filter[]) => {
+          await addFilters({ newFilters: filters, addFiltersCached, filterManager, indexPatterns });
+        };
+      })(filterManager?.addFilters);
     });
 
-    // Register an application into the side navigation menu
-    core.application.register({
-      id: 'kibanaObjectFormat',
-      title: PLUGIN_NAME,
-      async mount(params: AppMountParameters) {
-        // Load application bundle
-        const { renderApp } = await import('./application');
-        // Get start services as specified in kibana.json
-        const [coreStart, depsStart] = await core.getStartServices();
-        // Render the application
-
-        return renderApp(coreStart, depsStart as StartPlugins, params);
-      },
-    });
-
-    // Return methods that should be available to other plugins
     return {};
   }
 
-  public start(core: CoreStart): PluginStart {
+  public start(core: CoreStart, { data }: StartPlugins) {
+    let init = false;
+
+    core.application.currentAppId$.subscribe(() => {
+      if (!init) {
+        data.query.filterManager.register(objectFilter);
+      }
+      initPopover();
+      updateFieldFormatTemplate(true);
+      init = true;
+    });
+
     return {};
   }
 

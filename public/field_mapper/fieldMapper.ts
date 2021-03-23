@@ -1,31 +1,26 @@
 import { has, uniq, difference } from 'lodash';
 import { IUiSettingsClient } from 'kibana/public';
-import { FieldSpec, IndexPatternSpec } from 'src/plugins/data/common';
+import { FieldSpec } from 'src/plugins/data/common';
 
 export interface IFieldMapper {
   uiSettings: IUiSettingsClient;
   fields: FieldSpec[];
-  indexPattern: IndexPatternSpec;
+  pattern: string;
 }
 
-export const fieldMapper = ({ uiSettings, fields, indexPattern }: IFieldMapper): FieldSpec[] => {
+export const fieldMapper = ({ uiSettings, fields, pattern }: IFieldMapper): FieldSpec[] => {
   const { index_pattern: settings } = uiSettings.get('ObjectFieldMapper:fields');
-
-  if (!indexPattern?.id) {
-    throw Error('fieldMapper: IndexPattern.id is missing.');
-  }
 
   let match = { include: [], exclude: [] };
   if (has(settings, '*')) {
     match = settings['*'];
-  } else if (has(settings, indexPattern.id)) {
-    match = settings[indexPattern.id];
+  } else if (has(settings, pattern)) {
+    match = settings[pattern];
   }
 
   // 1) Iterate the field names, identify the "parent" paths
   const mappingNames: string[] = [];
   let paths: string[] = [];
-  
 
   for (let field of fields) {
     const fieldName = field.name;

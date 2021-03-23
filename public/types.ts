@@ -1,10 +1,16 @@
-import { NavigationPublicPluginStart } from '../../../src/plugins/navigation/public';
 import { DataPublicPluginStart } from '../../../src/plugins/data/public';
 import { IndexPatternManagementSetup } from '../../../src/plugins/index_pattern_management/public';
 
+interface filterManagerAddons {
+  query: {
+    filterManager: {
+      register: any
+    }
+  }
+}
+
 export interface StartPlugins {
-  navigation: NavigationPublicPluginStart;
-  data: DataPublicPluginStart;
+  data: DataPublicPluginStart & filterManagerAddons;
 }
 
 export interface SetupPlugins {

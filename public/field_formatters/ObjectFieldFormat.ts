@@ -1,7 +1,7 @@
 import { HtmlContextTypeConvert, TextContextTypeConvert } from 'src/plugins/data/common/field_formats/types';
 import { FieldFormat } from '../../../../src/plugins/data/public';
 import { get, isObject, escape, isArray, compact, slice, template, TemplateExecutor } from 'lodash';
-import { asPrettyString, getFullPath, getPluck } from './helper';
+import { asPrettyString, getFullPath, getPluck } from '../utils';
 import formatHTML from './templates/object_format.html';
 import imageHTML from './templates/object_image.html';
 import linkHTML from './templates/object_link.html';

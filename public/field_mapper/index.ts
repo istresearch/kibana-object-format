@@ -1,1 +1,1 @@
-export { fieldMapper } from './field_mapper';
+export { fieldMapper } from './fieldMapper';

@@ -1,5 +1,5 @@
 {
-  "id": "kibana_object_format",
+  "id": "kibanaObjectFormat",
   "version": "1.0.0",
   "kibanaVersion": "kibana",
   "server": true,
