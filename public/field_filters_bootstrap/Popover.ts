@@ -46,7 +46,12 @@ class Popover {
 
   private handlerShowPopover(e: JQuery.Event & { target: any }) {
     const self = this;
-    const buttonNode = e.target?.parentNode?.parentNode;
+
+    let buttonNode: any = e.target;
+
+    while (!$(buttonNode).hasClass('tippy-filter-button') ) {
+      buttonNode = buttonNode.parentNode;
+    }   
 
     if ($(buttonNode).hasClass('tippy-filter-button')) {
       this.instance = tippy(buttonNode, {

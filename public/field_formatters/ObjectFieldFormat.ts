@@ -1,7 +1,10 @@
-import { HtmlContextTypeConvert, TextContextTypeConvert } from 'src/plugins/data/common/field_formats/types';
-import { FieldFormat } from '../../../../src/plugins/data/public';
 import { get, isObject, escape, isArray, compact, slice, template, TemplateExecutor } from 'lodash';
-import { asPrettyString, getFullPath, getPluck } from '../utils';
+import {
+  HtmlContextTypeConvert,
+  TextContextTypeConvert,
+} from 'src/plugins/data/common/field_formats/types';
+import { FieldFormat } from '../../../../src/plugins/data/public';
+import { getFullPath, getPluck, asPrettyString, getHighlightHtml } from '../utils';
 import formatHTML from './templates/object_format.html';
 import imageHTML from './templates/object_image.html';
 import linkHTML from './templates/object_link.html';
@@ -109,7 +112,7 @@ export class ObjectFieldFormat extends FieldFormat {
       }
 
       const fullPath = getFullPath({ basePath, field, path });
-
+      getHighlightHtml;
       const filterPath = getFullPath({
         basePath,
         field,
@@ -125,11 +128,17 @@ export class ObjectFieldFormat extends FieldFormat {
           display: escape(fieldValue),
         };
 
+        if (hit?.highlight && hit.highlight[fullPath]) {
+          valueModel.display = getHighlightHtml(valueModel.display, hit.highlight[fullPath]);
+        } else if (hit?.highlight && hit.highlight[filterPath]) {
+          valueModel.display = getHighlightHtml(valueModel.display, hit.highlight[filterPath]);
+        }
+
         valueModels.push(valueModel);
       }
 
       const html = this.fieldToHtml({
-        label: `${label}:`,
+        label: label ? `${label}:` : '',
         formatType: type,
         values: valueModels,
         width,
@@ -139,7 +148,7 @@ export class ObjectFieldFormat extends FieldFormat {
 
       fields.push({
         formatType: type,
-        label: `${label}:`,
+        label: label ? `${label}:` : '',
         html,
       });
 
