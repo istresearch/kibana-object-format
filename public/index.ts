@@ -8,3 +8,4 @@ export function plugin() {
   return new KibanaObjectFormatPlugin();
 }
 export { StartPlugins, SetupPlugins, PluginSetup, PluginStart } from './types';
+export * from './utils';

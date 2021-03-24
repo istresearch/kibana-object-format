@@ -159,6 +159,7 @@ export class ObjectFieldFormat extends FieldFormat {
   htmlConvert: HtmlContextTypeConvert = (rawValue, options = {}) => {
     const { field, hit } = options;
     const visTemplate = template(formatHTML);
+    const emptyTemplate = template(emptyHTML);
     const basePath = this.param('basePath');
     const objectFields = this.param('fields');
     const limit = this.param('limit');
@@ -196,7 +197,7 @@ export class ObjectFieldFormat extends FieldFormat {
 
       return htmlSnippets.join('\n');
     } else {
-      return '-';
+      return emptyTemplate();
     }
   };
 

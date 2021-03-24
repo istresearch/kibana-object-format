@@ -1,4 +1,4 @@
-import { isArray } from 'lodash';
+import { isArray, get } from 'lodash';
 import { getPluck } from '../utils';
 
 export const objectFilter = ({
@@ -18,7 +18,7 @@ export const objectFilter = ({
   }
 
   const { basePath, limit: baseLimit } = params;
-  let vals = basePath ? _.get(values, basePath) : values;
+  let vals = basePath ? get(values, basePath) : values;
 
   if (!isArray(vals)) {
     vals = [vals];
