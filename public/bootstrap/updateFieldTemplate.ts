@@ -2,7 +2,7 @@ import { throttle } from 'lodash';
 
 let init = false;
 
-const updateTemplate = (showPopover: boolean) => {
+const updateFieldTemplate = (showPopover: boolean) => {
   const clean = (showPopover: boolean) => {
     $(`.collection-table`).closest(`td`).children(`.euiToolTipAnchor`).remove();
 
@@ -57,6 +57,6 @@ const updateTemplate = (showPopover: boolean) => {
 export default (showPopover = false) => {
   if (!init) {
     init = true;
-    updateTemplate(showPopover);
+    updateFieldTemplate(showPopover);
   }
 };

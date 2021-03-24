@@ -1,7 +1,7 @@
 import { isArray, get } from 'lodash';
 import { getPluck } from '../utils';
 
-export const objectFilter = ({
+export const objectFieldFilter = ({
   fieldName,
   formatType,
   params,
@@ -80,8 +80,8 @@ export const objectFilter = ({
 
   if (entryValues.length > 1 || entryValues.filter((v) => !!v.dHashValue).length) {
     const currentFilters = getCurrentFilters();
-    // @ts-ignore
-    popover.setForm(entryValues, currentFilters, (formValues) => {
+
+    popover.setForm(entryValues, currentFilters, (formValues: any) => {
       for (let formValue of formValues) {
         let { path, value, dHashPath, dHashValue, distance, negate, checked } = formValue;
         if (checked) {

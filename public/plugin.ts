@@ -1,12 +1,15 @@
 import { CoreSetup, CoreStart, Plugin } from 'kibana/public';
 import { StartPlugins, PluginStart, SetupPlugins, PluginSetup } from './types';
-import { ObjectFieldFormat } from './field_formatters/ObjectFieldFormat';
-import { ObjectFieldFormatEditor } from './field_formatters/ObjectFieldFormatEditor';
-import { fieldMapper } from './field_mapper';
+import {
+  fieldMapper,
+  addFilters,
+  initFilterManager,
+  initPopover,
+  setupAddFilters,
+  updateFieldTemplate,
+} from './bootstrap';
+import { ObjectFieldFormat, ObjectFieldFormatEditor, objectFieldFilter } from './object_field';
 import { Filter, GetFieldsOptions } from 'src/plugins/data/common';
-import { addFilters, initFilterManager, initPopover, setupAddFilters } from './field_filters_bootstrap';
-import { objectFilter } from './field_filters/objectFilter';
-import updateFieldFormatTemplate from './field_formatters/updateFieldFormatTemplate';
 import './utils/jqueryObserver';
 
 export class KibanaObjectFormatPlugin
@@ -51,10 +54,10 @@ export class KibanaObjectFormatPlugin
 
     core.application.currentAppId$.subscribe(() => {
       if (!init) {
-        data.query.filterManager.register(objectFilter);
+        data.query.filterManager.register(objectFieldFilter);
       }
       initPopover();
-      updateFieldFormatTemplate(true);
+      updateFieldTemplate(true);
       init = true;
     });
 

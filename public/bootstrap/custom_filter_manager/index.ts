@@ -30,10 +30,10 @@ export const initFilterManager = (filterManager: FilterManager & Partial<ICustom
     if (!filterManager?.customFilters) {
       filterManager.customFilters = [];
     }
- 
+
     filterManager.customFilters.push(customFilter);
   };
-}
+};
 
 export const setupAddFilters = async ({ indexPatterns, addFiltersCached, filterManager }: any) => {
   const indexPatternIDList = await indexPatterns.getIds();
