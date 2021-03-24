@@ -75,7 +75,7 @@ class Popover {
     e.preventDefault();
     e.stopPropagation();
 
-    const formFields = $('.object-filter-form').serializeArray() || ;
+    const formFields = $('.object-filter-form').serializeArray() || [];
     const selectedEntryValues = this.entryValues.map((entryValue) => ({
       ...entryValue,
       checked:
