@@ -75,7 +75,7 @@ class Popover {
     e.preventDefault();
     e.stopPropagation();
 
-    const formFields = $('.object-filter-form').serializeArray();
+    const formFields = $('.object-filter-form').serializeArray() || ;
     const selectedEntryValues = this.entryValues.map((entryValue) => ({
       ...entryValue,
       checked:
@@ -84,8 +84,7 @@ class Popover {
         ) !== -1,
       distance:
         entryValue.dHashValue &&
-        // @ts-ignore
-        formFields.find((field: any) => field.name === `${entryValue.dHashValue}-distance`).value,
+        formFields.find((field: any) => field.name === `${entryValue.dHashValue}-distance`)?.value,
     }));
 
     this.instance.hide();
