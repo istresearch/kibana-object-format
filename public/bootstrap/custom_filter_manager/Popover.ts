@@ -138,7 +138,7 @@ class Popover {
                   </div>
                 </label>
                 ${
-                  dHashValue &&
+                  dHashValue ?
                   `
                   <div class="range-slider">
                     <div class="range-label first">Exact</div>
@@ -146,7 +146,7 @@ class Popover {
                     <input type="range" name="${dHashValue}-distance-range" step="1" min="0" max="31" value="${distance}" data-rangeslider>
                     <input type="number" name="${dHashValue}-distance"  min="0" max="31" value="${distance}" data-range-input>
                   </div>
-                `
+                ` : ''
                 }
               </div>
             `;
