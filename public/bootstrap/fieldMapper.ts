@@ -1,6 +1,6 @@
 import { has, uniq, difference } from 'lodash';
 import { IUiSettingsClient } from 'kibana/public';
-import { FieldSpec } from 'src/plugins/data/common';
+import { FieldSpec } from '../../../../src/plugins/data/common';
 
 export interface IFieldMapper {
   uiSettings: IUiSettingsClient;

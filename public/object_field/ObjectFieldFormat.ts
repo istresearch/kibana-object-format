@@ -2,7 +2,7 @@ import { get, isObject, escape, isArray, compact, slice, template, TemplateExecu
 import {
   HtmlContextTypeConvert,
   TextContextTypeConvert,
-} from 'src/plugins/data/common/field_formats/types';
+} from '../../../../src/plugins/data/common/field_formats/types';
 import { FieldFormat } from '../../../../src/plugins/data/public';
 import { getFullPath, getPluck, asPrettyString, getHighlightHtml } from '../utils';
 import formatHTML from './templates/object_format.html';

@@ -1,7 +1,7 @@
 import { isArray, get } from 'lodash';
 import Popover from './Popover';
 import FilterManagerHelper from './FilterManagerHelper';
-import { FilterManager } from 'src/plugins/data/public';
+import { FilterManager } from '../../../../../src/plugins/data/public';
 
 let popover: Popover | undefined;
 let filterManagerHelper: any;

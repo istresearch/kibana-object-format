@@ -9,7 +9,7 @@ import {
   updateFieldTemplate,
 } from './bootstrap';
 import { ObjectFieldFormat, ObjectFieldFormatEditor, objectFieldFilter } from './object_field';
-import { Filter, GetFieldsOptions } from 'src/plugins/data/common';
+import { Filter, GetFieldsOptions } from '../../../src/plugins/data/common';
 import './utils/jqueryObserver';
 
 export class KibanaObjectFormatPlugin

@@ -1,6 +1,6 @@
 import { get } from 'lodash';
-import { FilterMeta } from 'src/plugins/data/common';
-import { Filter, FilterManager } from 'src/plugins/data/public';
+import { FilterMeta } from '../../../../../src/plugins/data/common';
+import { Filter, FilterManager } from '../../../../../src/plugins/data/public';
 
 class FilterManagerHelper {
   private addFiltersCache: (filters: Filter | Filter[], pinFilterStatus?: boolean) => void;
