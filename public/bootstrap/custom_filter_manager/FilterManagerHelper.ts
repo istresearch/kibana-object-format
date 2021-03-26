@@ -1,12 +1,11 @@
 import { get } from 'lodash';
-import { FilterMeta } from '../../../../../src/plugins/data/common';
-import { Filter, FilterManager } from '../../../../../src/plugins/data/public';
+import { Filter, CustomFilterManager, CustomFilterMeta } from '../../types';
 
 class FilterManagerHelper {
   private addFiltersCache: (filters: Filter | Filter[], pinFilterStatus?: boolean) => void;
   private similarityScript: string = '';
   private newFilter: Partial<Filter> = {};
-  private filterManager: FilterManager;
+  private filterManager: CustomFilterManager;
 
   constructor(addFiltersCache: any, filterManager: any) {
     this.addFiltersCache = addFiltersCache;
@@ -14,7 +13,7 @@ class FilterManagerHelper {
     this.filterManager = filterManager;
   }
 
-  private getFilterIndex({ path, value, negate }: Partial<FilterMeta> & { path: string }) {
+  private getFilterIndex({ path, value, negate }: Partial<CustomFilterMeta>) {
     const currentFilters = this.getCurrentFilters();
 
     return currentFilters.findIndex(
@@ -22,7 +21,7 @@ class FilterManagerHelper {
     );
   }
 
-  public getCurrentFilters() {
+  public getCurrentFilters(): Partial<CustomFilterMeta>[] {
     return this.filterManager.getFilters().map((filter) => ({
       path:
         get(filter, 'query.bool.must.script.script.params.field', null) ||
@@ -35,36 +34,34 @@ class FilterManagerHelper {
     }));
   }
 
-  public addFilter({ path, value, negate, alias = null }: Partial<FilterMeta> & { path: string }) {
+  public addFilter({ path, value, negate, alias = null }: Partial<CustomFilterMeta>) {
     const filterIndex = this.getFilterIndex({ path, value, negate });
 
     if (filterIndex >= 0) {
       return;
     }
 
-    this.addFiltersCache.apply(this.filterManager, [
-      {
-        ...this.newFilter,
-        meta: {
-          alias,
-          negate: !!this.newFilter?.meta?.negate,
-          index: this.newFilter?.meta?.index,
-          disabled: false,
-        },
-        query: {
-          match_phrase: {
-            [path]: value,
+    if (path) {
+      this.addFiltersCache.apply(this.filterManager, [
+        {
+          ...this.newFilter,
+          meta: {
+            alias,
+            negate: !!this.newFilter?.meta?.negate,
+            index: this.newFilter?.meta?.index,
+            disabled: false,
+          },
+          query: {
+            match_phrase: {
+              [path]: value,
+            },
           },
         },
-      },
-    ]);
+      ]);
+    }
   }
 
-  public addImageSimilarityFilter({
-    path,
-    value,
-    distance = '8',
-  }: FilterMeta & { path: string; distance: string }) {
+  public addImageSimilarityFilter({ path, value, distance = '8' }: CustomFilterMeta) {
     this.removeFilter({ path, value, negate: true });
     this.removeFilter({ path, value, negate: false });
 
@@ -98,7 +95,7 @@ class FilterManagerHelper {
     ]);
   }
 
-  public removeFilter({ path, value, negate }: Partial<FilterMeta> & { path: string }) {
+  public removeFilter({ path, value, negate }: Partial<CustomFilterMeta>) {
     const currentFilters = this.filterManager.getFilters();
     const filterIndex = this.getFilterIndex({ path, value, negate });
 

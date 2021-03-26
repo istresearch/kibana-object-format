@@ -10,17 +10,18 @@ import imageHTML from './templates/object_image.html';
 import linkHTML from './templates/object_link.html';
 import textHTML from './templates/object_text.html';
 import emptyHTML from './templates/object_empty.html';
+import { ObjectFieldParams, ObjectField, ObjectFieldType } from '../types';
 
-const DEFAULT_VALUES = {
-  label: null, // Optional data label
-  path: null, // Dot notated location of the value within the object, relative to basePath
-  type: 'text',
+const DEFAULT_VALUES: ObjectField = {
+  label: undefined, // Optional data label
+  path: undefined, // Dot notated location of the value within the object, relative to basePath
+  type: ObjectFieldType.TEXT,
   filtered: true, // To enable the filtering on cell click
-  dHashField: null,
-  filterField: null, // If the data is analyzed, and there is a keyword subfield we can use for the filter
-  height: null, // Image dimension in px
-  width: null, // Image dimension in px
-  limit: null, // If presenting an array, this is the max we will show
+  dHashField: undefined,
+  filterField: undefined, // If the data is analyzed, and there is a keyword subfield we can use for the filter
+  height: undefined, // Image dimension in px
+  width: undefined, // Image dimension in px
+  limit: undefined, // If presenting an array, this is the max we will show
 };
 
 export class ObjectFieldFormat extends FieldFormat {
@@ -28,12 +29,12 @@ export class ObjectFieldFormat extends FieldFormat {
   static title = 'Object';
   static fieldType = ['string'];
 
-  getParamDefaults() {
+  getParamDefaults(): ObjectFieldParams {
     return {
-      fieldType: null, // populated by editor, see controller
-      basePath: null, // If multiple fields should be grouped, this is the common parent
-      limit: null, // // If basePath is an array, this is the max we will show
-      similarityScript: null,
+      fieldType: undefined, // populated by editor, see controller
+      basePath: undefined, // If multiple fields should be grouped, this is the common parent
+      limit: undefined, // // If basePath is an array, this is the max we will show
+      similarityScript: undefined,
       fields: [{ ...DEFAULT_VALUES }],
     };
   }
@@ -42,13 +43,13 @@ export class ObjectFieldFormat extends FieldFormat {
     let tmplhtml: TemplateExecutor;
 
     switch (field.formatType) {
-      case 'image':
+      case ObjectFieldType.IMAGE:
         tmplhtml = template(imageHTML);
         break;
-      case 'link':
+      case ObjectFieldType.LINK:
         tmplhtml = template(linkHTML);
         break;
-      case 'text':
+      case ObjectFieldType.TEXT:
         tmplhtml = template(textHTML);
         break;
       default:
@@ -69,7 +70,7 @@ export class ObjectFieldFormat extends FieldFormat {
     field: any;
     hit?: any;
     basePath?: string;
-    objectFields: any;
+    objectFields: ObjectField[];
   }) {
     const fields = [];
 
@@ -87,7 +88,7 @@ export class ObjectFieldFormat extends FieldFormat {
 
       let fieldValues = getPluck(value, path);
 
-      if (type === 'text') {
+      if (type === ObjectFieldType.TEXT) {
         if (isArray(fieldValues)) {
           if (objectField.limit) {
             fieldValues = slice(fieldValues, 0, objectField.limit);

@@ -1,10 +1,10 @@
-import tippy, { DefaultProps } from 'tippy.js';
+import tippy, { DefaultProps, Instance } from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/light.css';
 
 class Popover {
   private init: boolean = false;
-  private instance: any = null;
+  private instance: Instance | undefined;
   private callback: any = null;
   private entryValues: any[] = [];
 
@@ -44,22 +44,27 @@ class Popover {
     $(this).prev().val(val);
   }
 
-  private handlerShowPopover(e: JQuery.Event & { target: any }) {
+  private handlerShowPopover(e: JQuery.Event & { target: HTMLElement }) {
     const self = this;
 
-    let buttonNode: any = e.target;
+    let buttonNode = e.target;
 
-    while (!$(buttonNode).hasClass('tippy-filter-button') ) {
-      buttonNode = buttonNode.parentNode;
-    }   
+    while (!$(buttonNode).hasClass('tippy-filter-button')) {
+      if (buttonNode.parentElement) {
+        buttonNode = buttonNode.parentElement;
+      } else {
+        break;
+      }
+    }
 
     if ($(buttonNode).hasClass('tippy-filter-button')) {
-      this.instance = tippy(buttonNode, {
+      // @ts-ignore
+      this.instance = <Instance>tippy(buttonNode, {
         onHide(instance) {
           setTimeout(() => {
-            instance.unmount();
-            instance.destroy();
-            self.instance = null;
+            instance?.unmount();
+            instance?.destroy();
+            self.instance = undefined;
           }, 100);
 
           $('.keep-icon-visible').removeClass('keep-icon-visible');
@@ -67,11 +72,11 @@ class Popover {
       });
 
       $(e.target).addClass('keep-icon-visible');
-      this.instance.show();
+      this.instance?.show();
     }
   }
 
-  private handlerProcessForm(e: JQuery.Event & { target: any }) {
+  private handlerProcessForm(e: JQuery.Event & { target: HTMLElement }) {
     e.preventDefault();
     e.stopPropagation();
 
@@ -87,11 +92,11 @@ class Popover {
         formFields.find((field: any) => field.name === `${entryValue.dHashValue}-distance`)?.value,
     }));
 
-    this.instance.hide();
+    this.instance?.hide();
     this.callback(selectedEntryValues);
   }
 
-  private handlerSelectAll(e: JQuery.Event & { target: any }) {
+  private handlerSelectAll(e: JQuery.Event & { target: HTMLElement }) {
     e.preventDefault();
     e.stopPropagation();
 
@@ -138,15 +143,16 @@ class Popover {
                   </div>
                 </label>
                 ${
-                  dHashValue ?
-                  `
+                  dHashValue
+                    ? `
                   <div class="range-slider">
                     <div class="range-label first">Exact</div>
                     <div class="range-label last">Fuzzy</div>
                     <input type="range" name="${dHashValue}-distance-range" step="1" min="0" max="31" value="${distance}" data-rangeslider>
                     <input type="number" name="${dHashValue}-distance"  min="0" max="31" value="${distance}" data-range-input>
                   </div>
-                ` : ''
+                `
+                    : ''
                 }
               </div>
             `;
@@ -180,8 +186,8 @@ class Popover {
 
   public initialize() {
     this.init = true;
-    this.instance = null;
-    this.callback = null;
+    this.instance = undefined;
+    this.callback = undefined;
     this.entryValues.length = 0;
     $('body').on(
       'submit.objectFilterForm',
@@ -200,8 +206,8 @@ class Popover {
 
   public destroy() {
     this.init = false;
-    this.instance = null;
-    this.callback = null;
+    this.instance = undefined;
+    this.callback = undefined;
     this.entryValues.length = 0;
     $('body').off('submit.objectFilterForm');
     $('body').off('click.selectFilters');
@@ -217,20 +223,16 @@ class Popover {
     this.setContent(formhtml);
   }
 
-  private setContent(content: any) {
+  private setContent(content: string) {
     setTimeout(() => {
-      if (this.instance) {
-        this.instance.setContent('');
-        this.instance.setContent(content);
-      }
+      this.instance?.setContent('');
+      this.instance?.setContent(content);
     }, 0);
   }
 
   public hide() {
     setTimeout(() => {
-      if (this.instance) {
-        this.instance.hide();
-      }
+      this.instance?.hide();
     }, 0);
   }
 }

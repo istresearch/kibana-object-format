@@ -1,7 +1,7 @@
 import { isArray, get } from 'lodash';
 import Popover from './Popover';
 import FilterManagerHelper from './FilterManagerHelper';
-import { FilterManager } from '../../../../../src/plugins/data/public';
+import { CustomFilterProps, CustomFilterManager } from '../../types';
 
 let popover: Popover | undefined;
 let filterManagerHelper: any;
@@ -20,12 +20,7 @@ export const initPopover = () => {
   popover?.initialize();
 };
 
-interface ICustomFilter {
-  register: (customFilter: any) => void;
-  customFilters: any[];
-}
-
-export const initFilterManager = (filterManager: FilterManager & Partial<ICustomFilter>) => {
+export const initFilterManager = (filterManager: Partial<CustomFilterManager>) => {
   filterManager.register = (customFilter: any) => {
     if (!filterManager?.customFilters) {
       filterManager.customFilters = [];
@@ -35,7 +30,11 @@ export const initFilterManager = (filterManager: FilterManager & Partial<ICustom
   };
 };
 
-export const setupAddFilters = async ({ indexPatterns, addFiltersCached, filterManager }: any) => {
+export const setupAddFilters = async ({
+  indexPatterns,
+  addFiltersCached,
+  filterManager,
+}: Pick<CustomFilterProps, 'indexPatterns' | 'addFiltersCached' | 'filterManager'>) => {
   const indexPatternIDList = await indexPatterns.getIds();
 
   for (let id of indexPatternIDList) {
@@ -51,12 +50,12 @@ export const addFilters = async ({
   newFilters,
   addFiltersCached,
   indexPatterns,
-}: any) => {
+}: CustomFilterProps) => {
   if (isArray(newFilters) && newFilters.length !== 1) {
     return;
   }
 
-  const newFilter = newFilters[0];
+  const newFilter = Array.isArray(newFilters) ? newFilters[0] : newFilters;
   const selectedIndexPatternID = get(newFilter, 'meta.index', null);
   const selectedIndexPattern = await indexPatterns.get(selectedIndexPatternID);
   const fieldFormatMap = selectedIndexPattern.fieldFormatMap;
@@ -91,15 +90,17 @@ export const addFilters = async ({
   };
   let customFilterFlag = false;
 
-  for (let customFilter of filterManager.customFilters) {
-    customFilterFlag = customFilter(filterParams);
+  if (filterManager.customFilters) {
+    for (let customFilter of filterManager.customFilters) {
+      customFilterFlag = customFilter(filterParams);
 
-    if (customFilterFlag) {
-      break;
+      if (customFilterFlag) {
+        break;
+      }
     }
   }
 
   if (!customFilterFlag) {
-    addFiltersCached.apply(filterManager, newFilters);
+    addFiltersCached.apply(filterManager, [newFilters]);
   }
 };
