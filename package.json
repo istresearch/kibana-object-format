@@ -10,6 +10,7 @@
     "kbn": "node ../../scripts/kbn"
   },
   "dependencies": {
-    "tippy.js": "^6.3.1"
+    "tippy.js": "^6.3.1",
+    "uuid": "^8.3.2"
   }
 }

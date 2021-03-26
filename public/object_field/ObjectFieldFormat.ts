@@ -4,7 +4,7 @@ import {
   TextContextTypeConvert,
 } from '../../../../src/plugins/data/common/field_formats/types';
 import { FieldFormat } from '../../../../src/plugins/data/public';
-import { getFullPath, getPluck, asPrettyString, getHighlightHtml } from '../utils';
+import { getFullPath, getPluck, asPrettyString, getHighlightHtml, generateUuids } from '../utils';
 import formatHTML from './templates/object_format.html';
 import imageHTML from './templates/object_image.html';
 import linkHTML from './templates/object_link.html';
@@ -189,7 +189,7 @@ export class ObjectFieldFormat extends FieldFormat {
           htmlSnippets.push(
             visTemplate({
               ...fieldModels,
-              uid: Math.floor(Math.random() * 1000000 + 1),
+              uid: generateUuids()[0],
             })
           );
         }
