@@ -1,41 +1,16 @@
 {
   "name": "kibana_object_format",
-  "version": "0.1.10",
+  "version": "1.0.0",
   "description": "Enables objects in arrays to be configured with a field formatter.",
   "license": "Apache 2.0",
   "homepage": "https://github.com/istresearch/kibana-object-format",
-  "main": "index.js",
-  "kibana": {
-    "version": "kibana",
-    "templateVersion": "1.0.0"
-  },
   "scripts": {
-    "preinstall": "node ../../preinstall_check",
-    "kbn": "node ../../scripts/kbn",
-    "es": "node ../../scripts/es",
-    "lint": "eslint .",
-    "start": "plugin-helpers start",
-    "test:server": "plugin-helpers test:server",
-    "test:browser": "plugin-helpers test:browser",
-    "build": "plugin-helpers build"
+    "build": "yarn plugin-helpers build",
+    "plugin-helpers": "node ../../scripts/plugin_helpers",
+    "kbn": "node ../../scripts/kbn"
   },
   "dependencies": {
-    "tippy.js": "~6.2.2"
-  },
-  "devDependencies": {
-    "@elastic/eslint-config-kibana": "link:../../packages/eslint-config-kibana",
-    "@elastic/eslint-import-resolver-kibana": "link:../../packages/kbn-eslint-import-resolver-kibana",
-    "@kbn/expect": "link:../../packages/kbn-expect",
-    "@kbn/plugin-helpers": "link:../../packages/kbn-plugin-helpers",
-    "babel-eslint": "^10.0.1",
-    "eslint": "^5.16.0",
-    "eslint-plugin-babel": "^5.3.0",
-    "eslint-plugin-import": "^2.16.0",
-    "eslint-plugin-jest": "^22.4.1",
-    "eslint-plugin-jsx-a11y": "^6.2.1",
-    "eslint-plugin-mocha": "^5.3.0",
-    "eslint-plugin-no-unsanitized": "^3.0.2",
-    "eslint-plugin-prefer-object-spread": "^1.2.1",
-    "eslint-plugin-react": "^7.12.4"
+    "tippy.js": "^6.3.1",
+    "uuid": "^8.3.2"
   }
 }
