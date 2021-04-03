@@ -75,9 +75,7 @@ export class ObjectFieldFormat extends FieldFormat {
     let filtered = false;
     const fields = [];
 
-    console.log(objectFields);
     for (let objectField of objectFields) {
-      console.log(objectField);
       const {
         path = '',
         label,
