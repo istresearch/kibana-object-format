@@ -39,10 +39,10 @@ export class ObjectFieldFormat extends FieldFormat {
     };
   }
 
-  private fieldToHtml(field: any) {
+  private fieldToHtml(field: Partial<ObjectField> & { values: any }): string {
     let tmplhtml: TemplateExecutor;
 
-    switch (field.formatType) {
+    switch (field.type) {
       case ObjectFieldType.IMAGE:
         tmplhtml = template(imageHTML);
         break;
@@ -68,23 +68,30 @@ export class ObjectFieldFormat extends FieldFormat {
   }: {
     value: any;
     field: any;
-    hit?: any;
+    hit?: Record<string, any>;
     basePath?: string;
     objectFields: ObjectField[];
   }) {
+    let filtered = false;
     const fields = [];
 
+    console.log(objectFields);
     for (let objectField of objectFields) {
+      console.log(objectField);
       const {
         path = '',
         label,
         limit,
         type,
         filterField,
-        filtered = false,
+        filtered: filtered2,
         width,
         height,
       } = objectField;
+
+      if (filtered2) {
+        filtered = filtered2;
+      }
 
       let fieldValues = getPluck(value, path);
 
@@ -140,7 +147,7 @@ export class ObjectFieldFormat extends FieldFormat {
 
       const html = this.fieldToHtml({
         label: label ? `${label}:` : '',
-        formatType: type,
+        type,
         values: valueModels,
         width,
         height,
@@ -153,17 +160,18 @@ export class ObjectFieldFormat extends FieldFormat {
         html,
       });
 
-      return { filtered: filtered, fields: fields };
+      
     }
+    return { filtered: filtered, fields: fields };
   }
 
-  htmlConvert: HtmlContextTypeConvert = (rawValue, options = {}) => {
+  htmlConvert: HtmlContextTypeConvert = (rawValue: string | string[], options = {}) => {
     const { field, hit } = options;
     const visTemplate = template(formatHTML);
     const emptyTemplate = template(emptyHTML);
-    const basePath = this.param('basePath');
-    const objectFields = this.param('fields');
-    const limit = this.param('limit');
+    const basePath = <string | undefined>this.param('basePath');
+    const objectFields = <ObjectField[]>this.param('fields');
+    const limit = <number | undefined>this.param('limit');
 
     if (basePath) {
       rawValue = get(rawValue, basePath);
