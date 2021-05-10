@@ -1,3 +1,5 @@
+**Starting with Kibana 7.12, the multi-fields and list of objects are now displayed and filterable by Kibana itself without the use if this plugin. Development of this project has ceased and we will not be maintaining it going forward.** Here is one of several PRs introducing the changes making this plugin obsolete: https://github.com/elastic/kibana/issues/77107.
+
 # kibana_object_format
 
 This Kibana plugin enables you to configure field formatters for arrays of objects in the Discover tab and Search tables in dashboards.
